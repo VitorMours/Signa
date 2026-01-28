@@ -2,6 +2,7 @@ from __future__ import annotations
 from django.db import models 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
+import uuid 
 
 class CustomUserManager(BaseUserManager):
   """
@@ -31,5 +32,8 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
   username = None
   
+  id = models.UUIDField(null=False, blank=False, default = uuid.uuidv4)
+  first_name = models.CharField(max_length=50)
+  last_name = models.CharField(max_length=50)
     
   objects = CustomUserManager()
