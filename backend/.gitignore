@@ -11,6 +11,8 @@ accumulated_static/
 media/
 staticfiles/
 .env
+.venv
+/.venv
 venv/
 ENV/
 env/
