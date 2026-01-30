@@ -18,6 +18,10 @@ ENV/
 env/
 venv/
 /venv
+/migrations
+migrations/
+migrations
+
 
 # === Vue.js / Node / Frontend ===
 node_modules/
