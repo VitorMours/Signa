@@ -211,3 +211,9 @@ class TestUserModel(TestCase):
     self.assertEqual(type(user), module.CustomUser) 
     
     
+class TestTeatcherModel(TestCase):
+  def setUp(self) -> None:
+    pass
+  
+  def test_if_can_import_the_class(self) -> None:
+    pass
