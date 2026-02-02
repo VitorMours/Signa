@@ -185,4 +185,29 @@ class TestUserModel(TestCase):
     self.assertEqual(type(user), module.CustomUser)
     
   def test_if_create_superuser_method_instantiate_correct_extra_fields(self) -> None:
-    pass  
+    module = importlib.import_module("api.models.user")
+    class_ = module.CustomUser
+    user = class_.objects.create_superuser(
+      first_name="Lucas",
+      last_name="rezende",
+      email="lucas.rezende@souunit.com.br",
+      password="123123123asd!"
+    )  
+    self.assertTrue(user.is_superuser)
+    self.assertTrue(user.is_staff)
+    self.assertEqual(type(user), module.CustomUser) 
+    
+  def test_if_create_user_method_instantiate_correct_extra_fields(self) -> None:
+    module = importlib.import_module("api.models.user")
+    class_ = module.CustomUser
+    user = class_.objects.create_user(
+      first_name="Lucas",
+      last_name="rezende",
+      email="lucas.rezende@souunit.com.br",
+      password="123123123asd!"
+    )  
+    self.assertFalse(user.is_superuser)
+    self.assertFalse(user.is_staff)
+    self.assertEqual(type(user), module.CustomUser) 
+    
+    
