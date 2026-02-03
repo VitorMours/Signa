@@ -5,7 +5,7 @@ import importlib
 import inspect
 from django.db import models
 
-from backend.api.models.user import CustomUser 
+from api.models.user import CustomUser 
 
 class TestUserManagerModel(TestCase):
   def setUp(self) -> None:
@@ -235,18 +235,83 @@ class TestTeatcherModel(TestCase):
     class_ = module.Teatcher 
     self.assertTrue(issubclass(class_, CustomUser))
   
-  def test_if_teatcher_model_have_correct_fields_and_correct_typess(self) -> None:
+  def test_if_teatcher_model_have_correct_fields_and_correct_types(self) -> None:
     module = importlib.import_module("api.models.teatcher")
     class_ = module.Teatcher
     self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
     self.assertIsInstance(class_._meta.get_field("first_name"), models.CharField)
     self.assertIsInstance(class_._meta.get_field("last_name"), models.CharField)
-    self.assertIsIsntance(class_._meta.get_field("email"), models.EmailField)
-    self.assertIsInstance(class_._meta.get_field("password"), models.CharFields)
+    self.assertIsInstance(class_._meta.get_field("email"), models.EmailField)
+    self.assertIsInstance(class_._meta.get_field("password"), models.CharField)
     self.assertIsInstance(class_._meta.get_field("created_at"), models.DateTimeField)
     self.assertIsInstance(class_._meta.get_field("updated_at"), models.DateTimeField)
     
   
+class TestStudentModel(TestCase):
+  def setUp(self) -> None:
+    self.parameters_list = [
+      "first_name",
+      "last_name",
+      "email",
+      "password",
+      "craeted_at",
+      "updated_at",
+    ]
+  
+  def test_if_can_import_the_class(self) -> None:
+    try:
+      from api.models.student import Student
+    except ImportError:
+      raise ImportError("Was not possible to import the student model")
     
+  def test_if_student_model_have_correct_superclass(self) -> None:
+    module = importlib.import_module("api.models.student")
+    class_ = module.Student 
+    self.assertTrue(issubclass(class_, CustomUser))
+  
+  def test_if_teatcher_model_have_correct_fields_and_correct_types(self) -> None:
+    module = importlib.import_module("api.models.student")
+    class_ = module.Student
+    self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
+    self.assertIsInstance(class_._meta.get_field("first_name"), models.CharField)
+    self.assertIsInstance(class_._meta.get_field("last_name"), models.CharField)
+    self.assertIsInstance(class_._meta.get_field("email"), models.EmailField)
+    self.assertIsInstance(class_._meta.get_field("password"), models.CharField)
+    self.assertIsInstance(class_._meta.get_field("created_at"), models.DateTimeField)
+    self.assertIsInstance(class_._meta.get_field("updated_at"), models.DateTimeField)
     
   
+class TestClassModel(TestCase):
+  def setUp(self) -> None:
+    pass
+  
+  def test_if_can_import_module(self) -> None:
+    try:
+      from api.models.class_ import Class
+    except ImportError:
+      raise ImportError("Was not possible to import the class model")
+  
+  def test_if_class__module_have_correct_superclass(self) -> None:
+    module = importlib.import_module("api.models.class_")
+    class_ = module.Class 
+    self.assertTrue(issubclass(class_, models.Model))
+  
+class TestEnrollmentModel(TestCase):
+  def setUp(self) -> None:
+    pass 
+
+  def test_if_can_import_the_enrollment_class(self) -> None:
+    try:
+      from api.models.enrollment import Enrollment
+    except ImportError:
+      raise ImportError("was not possible to import the enrollment model")
+    
+  def test_if_enrollment_class_have_correct_superclass(self) -> None:
+    module = importlib.import_module("api.models.enrollment")
+    class_ = module.Enrollment
+    self.assertTrue(issubclass(class_, models.Model))
+         
+  def test_if_enrollment_have_the_correct_fields(self) -> None:
+    module = importlib.import_module("api.models.enrollment")
+    class_ = module.Enrollment
+    
