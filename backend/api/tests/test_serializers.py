@@ -6,7 +6,7 @@ import importlib
 
 class TestUserSerializer(TestCase):
   def setUp(self) -> None:
-    pass 
+    self.expected_fields = ["first_name","last_name","email","password"]
   
   def test_if_can_import_class_in_the_module(self) -> None:
     try:
@@ -17,22 +17,55 @@ class TestUserSerializer(TestCase):
   def test_if_user_serializer_its_correct_superclass(self) -> None:
     module = importlib.import_module("api.serializers.user_serializer")
     class_ = module.UserSerializer
-    self.assertTrue(issubclass(class_, serializers.ModelSerializer))
+    self.assertTrue(issubclass(class_, serializers.Serializer))
   
-  def test_if_user_serializer_have_correct_model(self) -> None:
+  # def test_if_serializer_have_correct_fields(self) -> None:
+  #   module = importlib.import_module("api.serializers.user_serializer")
+  #   class_ = module.UserSerializer 
+  #   attributes = [attr for attr in dir(class_) if not attr.startswith('__')]
+  #   self.assertTrue(set(self.expected_fields).issubset(set(attributes)))
+    
+  def test_if_user_serializer_have_correct_methods(self) -> None:
     module = importlib.import_module("api.serializers.user_serializer")
-    class_ = module.UserSerializer.Meta
-    self.assertEqual(class_.model, CustomUser)
+    class_ = module.UserSerializer 
+    create_method = getattr(class_, "create")
+    update_method = getattr(class_, "update")
+    delete_method = getattr(class_, "delete")
     
-  def test_if_timestamp_field_from_custom_user_is_readonly(self) -> None:
+    if not inspect.isfunction(create_method):
+      raise AssertionError("UserSerializer should have a create method")
+    
+    if not inspect.isfunction(update_method):
+      raise AssertionError("UserSerializer should have an update method")
+    
+    if not inspect.isfunction(delete_method):
+      raise AssertionError("UserSerializer should have a delete method")
+    
+  def test_if_correct_fields_are_required(self) -> None:
     module = importlib.import_module("api.serializers.user_serializer")
-    class_ = module.UserSerializer.Meta
-    self.assertEqual(class_.read_only_fields, ["created_at", "updated_at"])
+    class_ = module.UserSerializer()
+    first_name_field = class_.fields["first_name"]
+    last_name_field = class_.fields["last_name"] 
+    email_field = class_.fields["email"]
+    password_field = class_.fields["password"]
+    self.assertTrue(first_name_field.required)
+    self.assertTrue(last_name_field.required)
+    self.assertTrue(email_field.required)
+    self.assertTrue(password_field.required)
     
-  def test_if_correct_fields_are_viable_to_be_posted(self) -> None:
+  def test_if_create_method_works_correctly(self) -> None:
     module = importlib.import_module("api.serializers.user_serializer")
-    class_ = module.UserSerializer.Meta 
-    self.assertEqual(class_.fields, ["first_name","last_name","email","password","created_at","updated_at"])
+    class_ = module.UserSerializer
+    serializer = class_()
+    user_data = {
+      "first_name": "Joao",
+      "last_name": "Vitor",
+      "email": "joao.vitor@example.com",
+      "password": "secure_password"
+    }  
+    user = serializer.create(user_data)
+    self.assertIsInstance(user, CustomUser)
+    self.assertEqual(user.first_name, user_data["first_name"])
+    self.assertEqual(user.last_name, user_data["last_name"])
+    self.assertEqual(user.email, user_data["email"])
     
-    
-  
