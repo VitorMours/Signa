@@ -69,3 +69,4 @@ class TestUserSerializer(TestCase):
     self.assertEqual(user.last_name, user_data["last_name"])
     self.assertEqual(user.email, user_data["email"])
     
+
