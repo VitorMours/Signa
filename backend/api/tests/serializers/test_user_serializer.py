@@ -68,6 +68,7 @@ class TestUserSerializer(TestCase):
     self.assertEqual(user.first_name, user_data["first_name"])
     self.assertEqual(user.last_name, user_data["last_name"])
     self.assertEqual(user.email, user_data["email"])
+<<<<<<< HEAD:backend/api/tests/test_serializers.py
 
 
 class TestTeatcherSerializer(TestCase):
@@ -91,4 +92,7 @@ class TestTeatcherSerializer(TestCase):
 
     def test_if_teatcher_serializer_have_correct_fields(self) -> None:
         module = importlib.import_module("api.serializers.teatcher_serializer")
+=======
+    
+>>>>>>> 046855655a266f81582ae586a4a9cdfff1d70717:backend/api/tests/serializers/test_user_serializer.py
 
