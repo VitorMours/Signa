@@ -68,4 +68,27 @@ class TestUserSerializer(TestCase):
     self.assertEqual(user.first_name, user_data["first_name"])
     self.assertEqual(user.last_name, user_data["last_name"])
     self.assertEqual(user.email, user_data["email"])
-    
+
+
+class TestTeatcherSerializer(TestCase):
+    def setUp(self) -> None:
+        pass
+
+    def test_if_can_import_class_in_the_module(self) -> None:
+        try:
+            from api.serializers.teatcher_serializer import TeatcherSerializer
+        except ImportError:
+            raise ImportError("Was not possible to import the teatcher serializer")
+
+
+    def test_if_teatcher_serializer_have_correct_super_class(self) -> None:
+        try:
+            from api.serializers.teatcher_serializer import TeatcherSerializer
+            self.assertTrue(issubclass(TeatcherSerializer, serializers.Serializer))
+        except ImportError:
+            raise ImportError("Was not possible to check teatcher serializer super class")
+
+
+    def test_if_teatcher_serializer_have_correct_fields(self) -> None:
+        module = importlib.import_module("api.serializers.teatcher_serializer")
+

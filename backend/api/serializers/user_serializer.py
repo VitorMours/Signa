@@ -1,5 +1,6 @@
 from rest_framework import serializers 
 from api.models import CustomUser
+
 class UserSerializer(serializers.Serializer):
   """
   User serializer with some security and some read_only fields for privacy and 
