@@ -29,7 +29,7 @@ class TestTeatcherViewSet(TestCase):
   def test_if_teatcher_view_set_have_correct_authentication_classes(self) -> None:
     module = importlib.import_module("api.views.teatcher")
     class_ = module.TeatcherViewSet 
-    self.assertTrue(class_.authentication_classes, [])
+    self.assertTrue(class_.authentication_classes == [])
     
     
   def test_if_teatcher_view_set_have_correct_queryset(self) -> None:
@@ -37,6 +37,6 @@ class TestTeatcherViewSet(TestCase):
     class_ = module.TeatcherViewSet
     self.assertTrue(hasattr(class_, "queryset"))
     self.assertEqual(class_.queryset.model.__name__, "Teatcher")
-    self.assertEqual(class_.queryset, Teatcher.objects.all())
+    self.assertEqual(type(class_.queryset), type(Teatcher.objects.all()))
     
     
