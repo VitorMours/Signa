@@ -6,6 +6,7 @@ from api.views.teatcher import TeatcherViewSet
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView, TokenRefreshView
 
 router = SimpleRouter()
+
 router.register(r'users', UserViewSet, basename="users")
 router.register(r'teatchers', TeatcherViewSet, basename="teatchers")
 
