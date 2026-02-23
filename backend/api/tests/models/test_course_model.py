@@ -57,4 +57,10 @@ class TestCourseModel(TestCase):
     self.assertIsInstance(class_._meta.get_field("updated_at"), models.DateTimeField)
   
   def test_if_course_model_fields_have_correct_constraints(self) -> None:
-    pass
+    module = importlib.import_module("api.models.course")
+    class_ = module.Course
+
+    
+
+
+
