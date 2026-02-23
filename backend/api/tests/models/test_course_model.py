@@ -56,11 +56,54 @@ class TestCourseModel(TestCase):
     self.assertIsInstance(class_._meta.get_field("created_at"), models.DateTimeField)
     self.assertIsInstance(class_._meta.get_field("updated_at"), models.DateTimeField)
   
-  def test_if_course_model_fields_have_correct_constraints(self) -> None:
+  def test_if_course_model_id_field_have_correct_constraint(self) -> None:
     module = importlib.import_module("api.models.course")
     class_ = module.Course
-
+    id_field = class_._meta.get_field("id")
+    self.assertTrue(id_field.unique)
+    self.assertTrue(id_field.default)
+    self.assertTrue(id_field.primary_key)
+    self.assertFalse(id_field.editable)
     
+  def test_if_couse_model_name_field_have_correct_constraints(self) -> None:
+    module = importlib.import_module("api.models.course")
+    class_ = module.Course 
+    name_field = class_._meta.get_field("name")
+    self.assertEqual(name_field.max_length, 30)
+    self.assertTrue(name_field.editable)
+    self.assertFalse(name_field.null)
+    self.assertFalse(name_field.blank)
+  
+  def test_if_course_description_field_have_correct_constraints(self) -> None:
+    module = importlib.import_module("api.models.course")
+    class_ = module.Course 
+    description_field = class_._meta.get_field("description")
+    self.assertTrue(description_field.editable)
+    self.assertEqual(description_field.max_length, 125)
 
-
-
+  def test_if_course_teatcher_field_have_correct_constraints(self) -> None:
+    module = importlib.import_module("api.models.course")
+    class_ = module.Course
+    teatcher_field = class_._meta.get_field("teatcher")
+    self.assertIsNotNone(teatcher_field)
+    
+  def test_if_course_total_semesters_field_have_correct_constraints(self) -> None:
+    module = importlib.import_module("aṕi.models.course")
+    class_ = module.Course
+    total_semesters_field = class_._meta.get_field("total_semesters")
+    self.assertIsNotNone(total_semesters_field)
+    self.assertFalse(total_semesters_field.blank)
+    self.assertFalse(total_semesters_field.null)
+    
+  def test_if_total_semesters_cannot_be_lower_then_zero(self) -> None: 
+    pass 
+  
+  def test_if_actual_semester_field_have_correct_constraints(self) -> None:
+    module = importlib.import_module("api.models.course")
+    class_ = module.Course
+    actual_semesters_field = class_._meta.get_field("actual_semester")
+    self.assertFalse(actual_semesters_field.blank)
+    self.assertFalse(actual_semesters_field.null)
+    self.assertIsNotNone(actual_semesters_field.default) 
+    
+    
