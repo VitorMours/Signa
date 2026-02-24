@@ -86,9 +86,10 @@ class TestCourseModel(TestCase):
     class_ = module.Course
     teatcher_field = class_._meta.get_field("teatcher")
     self.assertIsNotNone(teatcher_field)
-    
+    self.assertTrue(teatcher_field.null)
+     
   def test_if_course_total_semesters_field_have_correct_constraints(self) -> None:
-    module = importlib.import_module("aṕi.models.course")
+    module = importlib.import_module("api.models.course")
     class_ = module.Course
     total_semesters_field = class_._meta.get_field("total_semesters")
     self.assertIsNotNone(total_semesters_field)
