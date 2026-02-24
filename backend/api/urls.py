@@ -3,12 +3,14 @@ from django.contrib import admin
 from django.urls import include, path
 from api.views.user import UserViewSet
 from api.views.teatcher import TeatcherViewSet
+from api.views.course import CourseViewSet
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView, TokenRefreshView
 
 router = SimpleRouter()
 
 router.register(r'users', UserViewSet, basename="users")
 router.register(r'teatchers', TeatcherViewSet, basename="teatchers")
+router.register(r'courses', CourseViewSet, basename="courses")
 
 api_urlpatterns = [
   path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
