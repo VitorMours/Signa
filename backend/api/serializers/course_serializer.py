@@ -34,4 +34,9 @@ class CourseSerializer(serializers.Serializer):
     return instance
   
   def delete(self, instance_id: UUID) -> None:
-    pass
+    course = Course.objects.filter(id=instance_id).first()
+    if course is None:
+      return ValueError("This course does not exists in the database") # TODO: Retornar um erro mlhor
+
+    course.delete()
+    return None

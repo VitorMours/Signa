@@ -104,12 +104,13 @@ class TestCourseSerializer(TestCase):
     class_ = module.CourseSerializer()
     self.assertTrue(hasattr(class_, "delete"))
     
-  def test_if_course_serializer_delete_method_works_correctly(self) -> None:
+  def test_if_course_serializer_delete_method_have_correct_signature(self) -> None:
     module = importlib.import_module("api.serializers.course_serializer")
     class_ = module.CourseSerializer
     signature = inspect.signature(class_.delete)
-    parameters = signature.parameters.keys()
-    self.assertEqual(parameters[0], "instance_id")
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0], "self")
+    self.assertEqual(parameters[1], "instance_id")
     
   def test_if_create_serializer_method_works(self) -> None:
     module = importlib.import_module("api.serializers.course_serializer")    
@@ -118,8 +119,30 @@ class TestCourseSerializer(TestCase):
     self.assertIsInstance(course, Course)
        
   def test_if_update_serializer_works(self) -> None:
-    pass 
-  
+    module = importlib.import_module("api.serializers.course_serializer")
+    class_ = module.CourseSerializer()
+    course = class_.create(self.mock_course)
+    updated_course = class_.update(course,
+      {
+        "name": "Serializers e modelos",
+        "description": "Projeto final do curso",
+        "total_semesters": 1,
+        "actual_semester": 1,
+        "start_date": date(2023, 1, 1),
+        "end_date": date(2028, 12, 31)
+      }
+    )
+    self.assertIsInstance(updated_course, Course)
+    self.assertTrue(updated_course.name == "Serializers e modelos")
+
   def test_if_delete_serializer_method_works(self) -> None:
-    pass
+    module = importlib.import_module("api.serializers.course_serializer")
+    class_ = module.CourseSerializer()
+    course = class_.create(self.mock_course)
+    searched_course = Course.objects.get(id=course.id)
+    self.assertIsInstance(searched_course, Course)
+    class_.delete(course.id)
+    searched_course = Course.objects.filter(id=course.id).exists()
+    self.assertFalse(searched_course)
+
   
