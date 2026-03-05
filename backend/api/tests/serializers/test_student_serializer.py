@@ -49,6 +49,26 @@ class TestStudentSerializer(TestCase):
         self.assertIsInstance(fields.get("updated_at"), serializers.DateTimeField)
 
 
+    def test_if_student_fields_have_correct_constraints(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer()
+        fields = class_.fields 
+               
+        # First Name and Last Name  
+        first_name_field = fields.get("first_name")
+        self.assertTrue(first_name_field.max_length == 50)
+
+        last_name_field = fields.get("last_name")
+        self.assertTrue(last_name_field.max_length == 50)
+
+        # Created at and udated at 
+        updated_at_field = fields.get("updated_at")
+        self.assertTrue(updated_at_field.read_only)
+        created_at_field = fields.get("created_at")
+        self.assertTrue(created_at_field.read_only)
+
+
+    
     def test_if_student_serializer_have_correct_methods(self) -> None:
         module = importlib.import_module("api.serializers.student_serializer")
         class_ = module.StudentSerializer
