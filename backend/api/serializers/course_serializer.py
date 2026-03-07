@@ -17,6 +17,19 @@ class CourseSerializer(serializers.Serializer):
   updated_at = serializers.DateTimeField(read_only=True)
   is_active = serializers.BooleanField()
   
+  
+  def validate(self, data) -> None:
+    if self.instance is None:
+      if Course.objects.filter(name=data["name"]).exists():
+        return serializers.ValidationError({"name"})  
+  
+    if data.get("total_semesters", 1) <= 0 or data.get("actual_semester", 0) < 0:
+      raise serializers.ValidationError({
+        "semesters": "total_semesters must be positive and actual_semester must be >= 0."
+      })
+
+    return data
+
   def create(self, validated_data: Course) -> None:
     return Course.objects.create(**validated_data)
   

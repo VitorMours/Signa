@@ -15,6 +15,8 @@ class TestCourseSerializer(TestCase):
     "start_date": date(2023, 1, 1),
     "end_date": date(2028, 12, 31)
   } 
+
+
   
   def test_if_can_import_the_module(self) -> None:
     try:
@@ -145,4 +147,16 @@ class TestCourseSerializer(TestCase):
     searched_course = Course.objects.filter(id=course.id).exists()
     self.assertFalse(searched_course)
 
-  
+  def test_if_course_serializer_have_validate_method(self) -> None:
+    module = importlib.import_module("api.serializers.course_serializer")
+    class_ = module.CourseSerializer()
+    self.assertTrue(hasattr(class_, "validate"))
+    
+  def test_if_validate_course_serializer_method_have_correct_signature(self) -> None:
+    module = importlib.import_module("api.serializers.course_serializer")
+    class_ = module.CourseSerializer()
+    signature = inspect.signature(class_.validate)
+    parameters = list(signature.parameters.keys())
+    self.assertTrue(parameters[0], "data")
+    
+    

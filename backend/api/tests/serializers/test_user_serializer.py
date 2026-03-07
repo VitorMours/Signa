@@ -6,7 +6,7 @@ import importlib
 
 class TestUserSerializer(TestCase):
   def setUp(self) -> None:
-    self.expected_fields = ["first_name","last_name","email","password"]
+    self.expected_fields = ["id","first_name","last_name","email","password"]
   
   def test_if_can_import_class_in_the_module(self) -> None:
     try:
@@ -52,6 +52,31 @@ class TestUserSerializer(TestCase):
     self.assertTrue(last_name_field.required)
     self.assertTrue(email_field.required)
     self.assertTrue(password_field.required)
+    
+  def test_if_fields_have_correct_types(self) -> None:
+    module = importlib.import_module("api.serializers.user_serializer")
+    class_ = module.UserSerializer()
+    fields = class_.fields
+
+    self.assertIsInstance(fields["id"], serializers.UUIDField)
+    self.assertIsInstance(fields["first_name"], serializers.CharField)
+    self.assertIsInstance(fields["last_name"], serializers.CharField)
+    self.assertIsInstance(fields["email"], serializers.EmailField)
+    self.assertIsInstance(fields["password"], serializers.CharField)
+    self.assertIsInstance(fields["created_at"], serializers.DateTimeField)
+    self.assertIsInstance(fields["updated_at"], serializers.DateTimeField)
+
+    self.assertTrue(fields["id"].read_only)
+    self.assertTrue(fields["created_at"].read_only)
+    self.assertTrue(fields["updated_at"].read_only)
+
+    self.assertTrue(fields["password"].write_only)
+
+    self.assertTrue(fields["first_name"].required)
+    self.assertTrue(fields["email"].required)
+    self.assertTrue(fields["password"].required)
+
+    self.assertFalse(fields["last_name"].required)
     
   def test_if_create_method_works_correctly(self) -> None:
     module = importlib.import_module("api.serializers.user_serializer")

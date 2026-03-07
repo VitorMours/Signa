@@ -6,6 +6,7 @@ class UserSerializer(serializers.Serializer):
   User serializer with some security and some read_only fields for privacy and 
   security reasons, DOES NOT CHANGE THIS
   """
+  id = serializers.UUIDField(read_only=True)
   first_name = serializers.CharField(max_length=50, help_text="O primeiro nome do usuario", required=True)
   last_name = serializers.CharField(max_length=50, help_text="O sobrenome do usuario")
   email = serializers.EmailField(help_text="O email do usuario", required=True)
