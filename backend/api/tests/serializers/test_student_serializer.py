@@ -41,6 +41,7 @@ class TestStudentSerializer(TestCase):
         module = importlib.import_module("api.serializers.student_serializer")
         class_ = module.StudentSerializer()
         fields = class_.fields
+        self.assertIsInstance(fields.get("id"), serializers.UUIDField)
         self.assertIsInstance(fields.get("first_name"), serializers.CharField)
         self.assertIsInstance(fields.get("last_name"), serializers.CharField)
         self.assertIsInstance(fields.get("email"), serializers.EmailField)
@@ -54,14 +55,12 @@ class TestStudentSerializer(TestCase):
         class_ = module.StudentSerializer()
         fields = class_.fields 
                
-        # First Name and Last Name  
         first_name_field = fields.get("first_name")
         self.assertTrue(first_name_field.max_length == 50)
 
         last_name_field = fields.get("last_name")
         self.assertTrue(last_name_field.max_length == 50)
 
-        # Created at and udated at 
         updated_at_field = fields.get("updated_at")
         self.assertTrue(updated_at_field.read_only)
         created_at_field = fields.get("created_at")
@@ -77,9 +76,9 @@ class TestStudentSerializer(TestCase):
         delete_method = getattr(class_, "delete")
         update_method = getattr(class_, "update")
         self.assertTrue(callable(get_method), "get student emthod is not callable")
-        self.assertTrue(callable(create_method), "create student emthod is not callable")
-        self.assertTrue(callable(update_method), "update student emthod is not callable")
-        self.assertTrue(callable(delete_method), "delete student emthod is not callable")
+        self.assertTrue(callable(create_method), "create student method is not callable")
+        self.assertTrue(callable(update_method), "update student method is not callable")
+        self.assertTrue(callable(delete_method), "delete student method is not callable")
         self.assertTrue(inspect.isfunction(get_method))
         self.assertTrue(inspect.isfunction(create_method))
         self.assertTrue(inspect.isfunction(update_method))
@@ -88,8 +87,25 @@ class TestStudentSerializer(TestCase):
     def test_if_student_serializer_create_method_have_correct_signature(self) -> None:
         module = importlib.import_module("api.serializers.student_serializer")
         class_ = module.StudentSerializer
-        pass
-
+        signature = inspect.signature(class_.create)
+        parameters = list(signature.parameters.keys())
+        self.assertEqual(parameters[0], "self")
+        self.assertEqual(parameters[0], "instance_data")
+        
+    def test_if_student_serializer_update_method_have_correct_signature(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer
+        signature = inspect.signature(class_.update)
+        parameters = list(signature.parameters.kesy())
+        self.assertEqual(parameters[0], "self")
+        self.assertEqual(parameters[1], "id")
+        self.assertEqual(parameters[2], "instance_data")
+        
+    def test_if_student_serializer_have_delete_method_correct_signature(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer
+        signature = inspect.signature(class_.delete)
+        parameters = list(signature.parameters.keys())
 
 
 

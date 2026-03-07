@@ -2,6 +2,7 @@ from api.models import Student
 from rest_framework import serializers
 
 class StudentSerializer(serializers.Serializer):
+    id = serializers.UUIDField(read_only=True)
     first_name = serializers.CharField(max_length=50)
     last_name = serializers.CharField(max_length=50)
     email = serializers.EmailField()
@@ -9,13 +10,10 @@ class StudentSerializer(serializers.Serializer):
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
 
-    def get(self) -> Student:
+    def create(self, instance_data) -> None:
         pass
 
-    def create(self) -> None:
-        pass
-
-    def update(self) -> None:
+    def update(self, id, instance_data) -> None:
         pass
 
     def delete(self) -> None:
