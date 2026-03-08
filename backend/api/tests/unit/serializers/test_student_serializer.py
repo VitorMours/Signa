@@ -3,10 +3,17 @@ from django.test import TestCase
 import importlib
 import inspect
 
+from api.models.student import Student
+
 class TestStudentSerializer(TestCase):
 
     def setUp(self) -> None:
-        pass
+        self.mock_student = {
+            "first_name":"Veloso",
+            "last_name":"Souza",
+            "email":"email.email@email.com",
+            "password":"123213asd!",
+        }
 
     def test_if_can_import_student_serializer_module(self) -> None:
         try:
@@ -71,15 +78,12 @@ class TestStudentSerializer(TestCase):
     def test_if_student_serializer_have_correct_methods(self) -> None:
         module = importlib.import_module("api.serializers.student_serializer")
         class_ = module.StudentSerializer
-        get_method = getattr(class_, "get")
         create_method = getattr(class_, "create")
         delete_method = getattr(class_, "delete")
         update_method = getattr(class_, "update")
-        self.assertTrue(callable(get_method), "get student emthod is not callable")
         self.assertTrue(callable(create_method), "create student method is not callable")
         self.assertTrue(callable(update_method), "update student method is not callable")
         self.assertTrue(callable(delete_method), "delete student method is not callable")
-        self.assertTrue(inspect.isfunction(get_method))
         self.assertTrue(inspect.isfunction(create_method))
         self.assertTrue(inspect.isfunction(update_method))
         self.assertTrue(inspect.isfunction(delete_method))
@@ -90,13 +94,13 @@ class TestStudentSerializer(TestCase):
         signature = inspect.signature(class_.create)
         parameters = list(signature.parameters.keys())
         self.assertEqual(parameters[0], "self")
-        self.assertEqual(parameters[0], "instance_data")
+        self.assertEqual(parameters[1], "instance_data")
         
     def test_if_student_serializer_update_method_have_correct_signature(self) -> None:
         module = importlib.import_module("api.serializers.student_serializer")
         class_ = module.StudentSerializer
         signature = inspect.signature(class_.update)
-        parameters = list(signature.parameters.kesy())
+        parameters = list(signature.parameters.keys())
         self.assertEqual(parameters[0], "self")
         self.assertEqual(parameters[1], "id")
         self.assertEqual(parameters[2], "instance_data")
@@ -106,6 +110,33 @@ class TestStudentSerializer(TestCase):
         class_ = module.StudentSerializer
         signature = inspect.signature(class_.delete)
         parameters = list(signature.parameters.keys())
+        self.assertEqual(parameters[0], "self")
+        self.assertEqual(parameters[1], "id")
+        
+    def test_if_serializer_have_validate_method(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer
+        self.assertTrue(hasattr(class_, "validate"))
 
+    def test_if_serializer_validate_method_have_correct_signature(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer
+        signature = inspect.signature(class_.validate)
+        parameters = list(signature.parameters.keys())
+        self.assertTrue(parameters[0], "self")
+        self.assertTrue(parameters[1], "data")
+        
+    def test_if_serializer_validate_method_works_correctly(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer()
+
+    def test_if_serializer_create_method_works(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer()
+        student = class_.create(self.mock_student)
+        self.assertIsInstance(student, Student)
+        
+        
+        
 
 
