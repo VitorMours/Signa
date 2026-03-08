@@ -76,7 +76,7 @@ class TestUserSerializer(TestCase):
     self.assertTrue(fields["email"].required)
     self.assertTrue(fields["password"].required)
 
-    self.assertFalse(fields["last_name"].required)
+    self.assertTrue(fields["last_name"].required)
     
   def test_if_create_method_works_correctly(self) -> None:
     module = importlib.import_module("api.serializers.user_serializer")
