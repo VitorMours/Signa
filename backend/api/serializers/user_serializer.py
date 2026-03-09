@@ -1,6 +1,6 @@
 from rest_framework import serializers 
 from api.models import CustomUser
-
+from django.core.validators import validate_email as django_validate_email
 class UserSerializer(serializers.Serializer):
   """
   User serializer with some security and some read_only fields for privacy and 
@@ -18,10 +18,14 @@ class UserSerializer(serializers.Serializer):
 
   def validate_email(self, value: str) -> str:
     current_id = self.instance.id if self.instance else None
-    if CustomUser.objects.filter(email=value).exclude(id=current_id).exists():
+    try:
+      django_validate_email(value)    
+      if CustomUser.objects.filter(email=value).exclude(id=current_id).exists():
+        raise serializers.ValidationError("Este email já está em uso.")
+      return value  
+    except Exception:
       raise serializers.ValidationError("Este email já está em uso.")
-    return value
-
+      
 
   def create(self, validated_data) -> CustomUser:
     return CustomUser.objects.create_user(**validated_data)

@@ -111,7 +111,7 @@ class TestStudentSerializer(TestCase):
         signature = inspect.signature(class_.delete)
         parameters = list(signature.parameters.keys())
         self.assertEqual(parameters[0], "self")
-        self.assertEqual(parameters[1], "id")
+        self.assertEqual(parameters[1], "instance")
         
     def test_if_serializer_have_validate_method(self) -> None:
         module = importlib.import_module("api.serializers.student_serializer")
@@ -137,6 +137,16 @@ class TestStudentSerializer(TestCase):
         self.assertIsInstance(student, Student)
         
         
-        
-
-
+    def test_if_serializer_update_method_works(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer()
+        student = class_.create(self.mock_student)
+        student = class_.update(id=student.id, instance_data={"first_name": "changing"})
+        self.assertEqual(student.first_name, "changing")
+                
+    def test_if_serializer_delete_method_works(self) -> None:
+        module = importlib.import_module("api.serializers.student_serializer")
+        class_ = module.StudentSerializer()
+        created_student = class_.create(self.mock_student)
+        deleted_student = class_.delete(instance=created_student)
+        self.assertFalse(deleted_student.is_active)

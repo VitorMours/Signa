@@ -5,7 +5,7 @@ import importlib
 import inspect
 from api.models.user import CustomUser
 import json
-
+from uuid import uuid4
 from rest_framework import status
 
 
@@ -58,8 +58,21 @@ class TestUserEntity(TestCase):
         self.assertGreater(len(data), 0)
 
     def test_if_user_resource_can_delete_the_resource(self) -> None:
-        pass
+        response = self.client.post("/api/users/", self.mock_user_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        search_response = self.client.get("/api/users/")
+        data = json.loads(search_response.content)
+        self.assertIsInstance(data, list, "O retorno de usuarios não é um json")
+        self.assertGreater(len(data), 0, "Get de usuarios está vazio")
+
+        first_user = data[0]
+        delete_response = self.client.delete(f"/api/users/{first_user['id']}/")
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+
+        fetch_after_delete = self.client.get(f"/api/users/{first_user['id']}/")
+        self.assertEqual(fetch_after_delete.status_code, status.HTTP_404_NOT_FOUND)
+        
     def test_if_user_resource_can_update_the_resource(self) -> None:
         pass
 
@@ -71,7 +84,20 @@ class TestUserEntity(TestCase):
         self.assertGreater(len(data), 0)
 
     def test_if_user_resource_can_get_the_resource_by_the_id(self) -> None:
-        pass
+        response = self.client.post("/api/users/", self.mock_user_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        search_response = self.client.get("/api/users/")
+        data = json.loads(search_response.content)
+        self.assertIsInstance(data, list, "O retorno de usuarios não é um json")
+        self.assertGreater(len(data), 0, "Get de usuarios está vazio")
+        first_user = data[0]
+        fetch_by_id_response = self.client.get(f"/api/users/{first_user["id"]}/")
+        data = json.loads(fetch_by_id_response.content)
+        # NOTE: Se usa o mock_user, porque ele ta sendo o primeiro a ser inserido
+        self.assertEqual(data["first_name"], self.mock_user.first_name)    
+        self.assertEqual(data["last_name"], self.mock_user.last_name)    
+        self.assertEqual(data["email"], self.mock_user.email)    
+
 
     def test_if_user_resource_can_partial_update_the_resource(self) -> None:
         pass
@@ -102,6 +128,6 @@ class TestUserRaiseErrorEntity(TestCase):
         data = json.loads(response.content)
         self.assertIn("Este email já está em uso", *data["email"])
 
-    def test_if_raise_error_if_try_to_delete_user_resource_tht_does_not_exists(self) -> None:
-        pass
-
+    def test_if_raise_error_if_try_to_delete_user_resource_that_does_not_exists(self) -> None:
+        response = self.client.delete(f"/api/users/{uuid4()}/")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

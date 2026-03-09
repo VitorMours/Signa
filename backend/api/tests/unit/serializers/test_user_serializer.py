@@ -107,4 +107,10 @@ class TestUserSerializer(TestCase):
     self.assertTrue(parameters[0] == "value")
 
   def test_if_validate_method_raises_validation_error_in_wrong_email(self) -> None:
-    pass
+    module = importlib.import_module("api.serializers.user_serializer")
+    class_ = module.UserSerializer()
+    with self.assertRaises(serializers.ValidationError):
+      class_.validate_email("emailemail.com")
+      
+    result = class_.validate_email("joao.vitor@example.com")
+    self.assertTrue(result)
