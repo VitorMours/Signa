@@ -94,4 +94,17 @@ class TestUserSerializer(TestCase):
     self.assertEqual(user.last_name, user_data["last_name"])
     self.assertEqual(user.email, user_data["email"])
     
+  def test_if_validate_method_exists(self) -> None:
+    module = importlib.import_module("api.serializers.user_serializer")
+    class_ = module.UserSerializer()
+    self.assertTrue(hasattr(class_, "validate_email"))
 
+  def test_if_validate_method_have_correct_signature(self) -> None:
+    module = importlib.import_module("api.serializers.user_serializer")
+    class_ = module.UserSerializer()
+    signature = inspect.signature(class_.validate_email)
+    parameters = list(signature.parameters.keys())
+    self.assertTrue(parameters[0] == "value")
+
+  def test_if_validate_method_raises_validation_error_in_wrong_email(self) -> None:
+    pass

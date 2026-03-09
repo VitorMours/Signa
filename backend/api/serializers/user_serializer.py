@@ -13,7 +13,16 @@ class UserSerializer(serializers.Serializer):
   password = serializers.CharField(write_only=True, help_text="A senha do usuario", required=True)
   created_at = serializers.DateTimeField(read_only=True)
   updated_at = serializers.DateTimeField(read_only=True)
-  
+
+  # TODO: Adicionar metodo par avalidar email para nao criar usuarios dupçicados
+
+  def validate_email(self, value: str) -> str:
+    current_id = self.instance.id if self.instance else None
+    if CustomUser.objects.filter(email=value).exclude(id=current_id).exists():
+      raise serializers.ValidationError("Este email já está em uso.")
+    return value
+
+
   def create(self, validated_data) -> CustomUser:
     return CustomUser.objects.create_user(**validated_data)
   
