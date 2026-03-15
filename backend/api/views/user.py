@@ -12,3 +12,7 @@ class UserViewSet(ModelViewSet):
   authentication_classes = []
   serializer_class = UserSerializer
   
+  def get_serializer(self, *args, **kwargs):
+    if self.request.method == "PATCH":
+      kwargs["partial"] = True
+    return super().get_serializer(*args, **kwargs)
