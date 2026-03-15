@@ -20,11 +20,11 @@ class UserSerializer(serializers.Serializer):
     current_id = self.instance.id if self.instance else None
     try:
       django_validate_email(value)    
-      if CustomUser.objects.filter(email=value).exclude(id=current_id).exists():
-        raise serializers.ValidationError("Este email já está em uso.")
-      return value  
     except Exception:
+      raise serializers.ValidationError("Email inválido.")
+    if CustomUser.objects.filter(email=value).exclude(id=current_id).exists():
       raise serializers.ValidationError("Este email já está em uso.")
+    return value  
       
 
   def create(self, validated_data) -> CustomUser:
