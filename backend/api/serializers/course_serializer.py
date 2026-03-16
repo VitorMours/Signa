@@ -1,6 +1,7 @@
 from rest_framework import serializers 
 from api.models import Course, Teatcher
 from uuid import UUID
+
 class CourseSerializer(serializers.Serializer):
   """
   Serializer para o Course Model
@@ -8,7 +9,10 @@ class CourseSerializer(serializers.Serializer):
   id = serializers.UUIDField(read_only=True)
   name = serializers.CharField()
   description  = serializers.CharField()
-  teatcher  = serializers.PrimaryKeyRelatedField(queryset=Teatcher.objects.all())
+  teatcher = serializers.PrimaryKeyRelatedField(
+    queryset=Teatcher.objects.all(),
+  )
+
   total_semesters = serializers.IntegerField()
   actual_semester = serializers.IntegerField()
   start_date = serializers.DateField()
@@ -17,6 +21,10 @@ class CourseSerializer(serializers.Serializer):
   updated_at = serializers.DateTimeField(read_only=True)
   is_active = serializers.BooleanField()
   
+  def to_representation(self, instance):
+    representation = super().to_representation(instance)
+    representation["teatcher"] = instance.teatcher.name  # substitui UUID pelo nome
+    return representation
   
   def validate(self, data) -> None:
     if self.instance is None:
