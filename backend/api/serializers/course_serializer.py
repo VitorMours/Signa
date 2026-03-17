@@ -23,7 +23,7 @@ class CourseSerializer(serializers.Serializer):
   
   def to_representation(self, instance):
     representation = super().to_representation(instance)
-    representation["teatcher"] = instance.teatcher.name  # substitui UUID pelo nome
+    representation["teatcher"] = instance.teatcher.first_name  # substitui UUID pelo nome
     return representation
   
   def validate(self, data) -> None:
