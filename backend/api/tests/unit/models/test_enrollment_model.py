@@ -22,13 +22,13 @@ class TestEnrollmentModel(TestCase):
     module = importlib.import_module("api.models.enrollment")
     class_ = module.Enrollment
     self.assertTrue(hasattr(class_, "student"))
-    self.assertTrue(hasattr(class_, "class_"))
+    self.assertTrue(hasattr(class_, "classroom"))
     
   def test_if_enrollment_model_fields_have_correct_data_types_in_columns(self) -> None:
     module = importlib.import_module("api.models.enrollment")
     class_ = module.Enrollment
     self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
     self.assertIsInstance(class_._meta.get_field("student"), models.ForeignKey)
-    self.assertIsInstance(class_._meta.get_field("class_"), models.ForeignKey)
+    self.assertIsInstance(class_._meta.get_field("classroom"), models.ForeignKey)
     
    
