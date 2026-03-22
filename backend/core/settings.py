@@ -24,7 +24,6 @@ SECRET_KEY = "django-insecure-r=2zxnf6d7^x)k738z%+_dc+onk&!w--hi$a%3p+=^*pz@_jzx
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-AUTH_USER_MODEL = "api.CustomUser"
 
 ALLOWED_HOSTS = []
 
@@ -41,8 +40,14 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "drf_yasg",
-    "api"
+    "users",
+    "classes",
+    "courses",
+    "enrollments",
+    "tools",
 ]
+AUTH_USER_MODEL = "users.CustomUser"
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -79,7 +84,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite",
     }
 }
 
