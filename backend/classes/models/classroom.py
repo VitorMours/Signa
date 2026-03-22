@@ -22,7 +22,6 @@ class Class(models.Model):
     subject (Subject): The Subjects of the class
   """
   
-  
   id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
   class_name  = models.CharField(blank=False, null=False)
   search_code  = models.CharField(blank=False, null=False, unique=True)
@@ -33,3 +32,7 @@ class Class(models.Model):
   teatcher = models.ForeignKey(Teatcher, on_delete=models.CASCADE, blank=False)
   lesson  = models.ForeignKey(Lesson, on_delete= models.CASCADE, blank=False)
   subject  = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=False)
+  
+  class Meta:
+    app_label="classes"
+    db_table="classes"

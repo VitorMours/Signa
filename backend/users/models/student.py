@@ -29,6 +29,7 @@ class Student(CustomUser):
   
   class Meta:
     app_label="users"
+    db_table="students"
 
 if __name__ == "__main__":
   import doctest 

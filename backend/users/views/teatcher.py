@@ -1,6 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
-from api.models.teatcher import Teatcher 
-from api.serializers.teatcher_serializer import TeatcherSerializer 
+from users.models.teatcher import Teatcher
+from users.serializers.teatcher_serializer import TeatcherSerializer
 
 
 class TeatcherViewSet(ModelViewSet):

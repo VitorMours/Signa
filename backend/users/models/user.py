@@ -58,5 +58,9 @@ class CustomUser(AbstractUser):
   objects = CustomUserManager()
   
   
+  class Meta:
+    db_table="users"
+  
+  
   
   
