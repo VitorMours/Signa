@@ -1,5 +1,5 @@
-from rest_framework import serializers 
-from api.models import Teatcher 
+from rest_framework import serializers
+from users.models.teatcher import Teatcher 
 
 class TeatcherSerializer(serializers.Serializer):
   """

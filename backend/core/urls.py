@@ -34,7 +34,7 @@ schema_view = get_schema_view(
 )
 
 api_urlpatterns = [
-    path(r'users', include('users.urls', namespace='users')),
+    path('users/', include('users.urls')),  # sem basename aqui
 ]
 
 urlpatterns = [

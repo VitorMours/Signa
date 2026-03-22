@@ -1,4 +1,4 @@
-from api.models import Student
+from users.models.student import Student
 from rest_framework import serializers
 from django.core.validators import validate_email as django_validate_email
 import uuid

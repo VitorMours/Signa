@@ -5,3 +5,4 @@ class Teatcher(CustomUser):
   
   class Meta:
     app_label="users"
+    db_table="teatchers"

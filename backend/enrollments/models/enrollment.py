@@ -20,8 +20,10 @@ class Enrollment(models.Model):
   
   id = models.UUIDField(primary_key=True, default=uuid.uuid4)
   student = models.ForeignKey(Student, on_delete=models.CASCADE)
-  classroom = models.ForeignKey(Class, on_delete=models.CASCADE)
+  classroom = models.ForeignKey('classes.Class', on_delete=models.CASCADE)
   is_active = models.BooleanField(default=True, null=False, blank=False)
   
   class Meta:
     app_label="enrollments"
+    db_table="enrollments"
+    

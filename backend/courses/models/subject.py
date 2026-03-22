@@ -10,3 +10,5 @@ class Subject(models.Model):
   
   class Meta:
     app_label = "courses"
+    db_table="subjects"
+    
