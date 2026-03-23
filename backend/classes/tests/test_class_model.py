@@ -10,17 +10,17 @@ class TestClassModel(TestCase):
   
   def test_if_can_import_module(self) -> None:
     try:
-      from backend.classes.models.classroom import Class
+      from classes.models.classroom import Class
     except ImportError:
       raise ImportError("Was not possible to import the class model")
   
   def test_if_class__module_have_correct_superclass(self) -> None:
-    module = importlib.import_module("api.models.classroom")
+    module = importlib.import_module("classes.models.classroom")
     class_ = module.Class 
     self.assertTrue(issubclass(class_, models.Model))
   
   def test_if_class_have_correct_fields(self) -> None:
-    module = importlib.import_module("api.models.classroom")
+    module = importlib.import_module("classes.models.classroom")
     class_ = module.Class 
     self.assertTrue(hasattr(class_, "lesson"))
     self.assertTrue(hasattr(class_, "subject"))
@@ -33,7 +33,7 @@ class TestClassModel(TestCase):
     self.assertTrue(hasattr(class_, "id"))
   
   def test_if_fields_have_correct_model_datatype(self) -> None:
-    module = importlib.import_module("api.models.classroom")
+    module = importlib.import_module("classes.models.classroom")
     class_ = module.Class 
     self.assertIsInstance(class_._meta.get_field("search_code"), models.CharField)
     self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
@@ -44,7 +44,7 @@ class TestClassModel(TestCase):
     self.assertIsInstance(class_._meta.get_field("lesson"), models.ForeignKey)
 
   def test_if_fields_configuration_are_correct(self) -> None:
-    module = importlib.import_module("api.models.classroom")
+    module = importlib.import_module("classes.models.classroom")
     class_ = module.Class 
     id_field = class_._meta.get_field("id")
     self.assertEqual(id_field.primary_key, True)
