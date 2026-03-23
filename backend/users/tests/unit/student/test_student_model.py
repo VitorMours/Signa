@@ -1,11 +1,10 @@
 from django.test import TestCase 
 from django.db import models 
 import importlib 
-import inspect 
-from api.models.user import CustomUser 
+import inspect
+from users.models.user import CustomUser 
 
-
-class TestTeatcherModel(TestCase):
+class TestStudentModel(TestCase):
   def setUp(self) -> None:
     self.parameters_list = [
       "first_name",
@@ -18,18 +17,18 @@ class TestTeatcherModel(TestCase):
   
   def test_if_can_import_the_class(self) -> None:
     try:
-      from api.models.teatcher import Teatcher
+      from users.models.student import Student
     except ImportError:
-      raise ImportError("Was not possible to import the teatcher model")
+      raise ImportError("Was not possible to import the student model")
     
-  def test_if_teatcher_model_have_correct_superclass(self) -> None:
-    module = importlib.import_module("api.models.teatcher")
-    class_ = module.Teatcher 
+  def test_if_student_model_have_correct_superclass(self) -> None:
+    module = importlib.import_module("users.models.student")
+    class_ = module.Student 
     self.assertTrue(issubclass(class_, CustomUser))
   
-  def test_if_teatcher_model_have_correct_fields_and_correct_types(self) -> None:
-    module = importlib.import_module("api.models.teatcher")
-    class_ = module.Teatcher
+  def test_if_student_model_have_correct_fields_and_correct_types(self) -> None:
+    module = importlib.import_module("users.models.student")
+    class_ = module.Student
     self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
     self.assertIsInstance(class_._meta.get_field("first_name"), models.CharField)
     self.assertIsInstance(class_._meta.get_field("last_name"), models.CharField)
@@ -38,3 +37,4 @@ class TestTeatcherModel(TestCase):
     self.assertIsInstance(class_._meta.get_field("created_at"), models.DateTimeField)
     self.assertIsInstance(class_._meta.get_field("updated_at"), models.DateTimeField)
     
+  

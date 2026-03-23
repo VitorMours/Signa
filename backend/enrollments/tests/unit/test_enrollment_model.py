@@ -9,23 +9,23 @@ class TestEnrollmentModel(TestCase):
 
   def test_if_can_import_the_enrollment_class(self) -> None:
     try:
-      from backend.enrollments.models.enrollment import Enrollment
+      from enrollments.models.enrollment import Enrollment
     except ImportError:
       raise ImportError("was not possible to import the enrollment model")
     
   def test_if_enrollment_class_have_correct_superclass(self) -> None:
-    module = importlib.import_module("api.models.enrollment")
+    module = importlib.import_module("enrollments.models.enrollment")
     class_ = module.Enrollment
     self.assertTrue(issubclass(class_, models.Model))
          
   def test_if_enrollment_have_the_correct_fields(self) -> None:
-    module = importlib.import_module("api.models.enrollment")
+    module = importlib.import_module("enrollments.models.enrollment")
     class_ = module.Enrollment
     self.assertTrue(hasattr(class_, "student"))
     self.assertTrue(hasattr(class_, "classroom"))
     
   def test_if_enrollment_model_fields_have_correct_data_types_in_columns(self) -> None:
-    module = importlib.import_module("api.models.enrollment")
+    module = importlib.import_module("enrollments.models.enrollment")
     class_ = module.Enrollment
     self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
     self.assertIsInstance(class_._meta.get_field("student"), models.ForeignKey)
