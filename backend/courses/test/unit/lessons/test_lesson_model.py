@@ -9,17 +9,17 @@ class TestLessonModel(TestCase):
 
   def test_if_can_import_model_from_module(self) -> None:
     try:
-      from api.models.lesson import Lesson
+      from courses.models.lesson import Lesson
     except ImportError:
       raise ImportError("Was not possible to import the lesson model")
   
   def test_if_lesson_model_have_correct_superclass(self) -> None:
-    module = importlib.import_module("api.models.lesson")
+    module = importlib.import_module("courses.models.lesson")
     class_ = module.Lesson 
     self.assertTrue(issubclass(class_, models.Model))
     
   def test_if_lesson_model_have_expected_fields(self) -> None:
-    module = importlib.import_module("api.models.lesson")
+    module = importlib.import_module("courses.models.lesson")
     class_ = module.Lesson
     
     self.assertTrue(hasattr(class_, "id"))
@@ -32,7 +32,7 @@ class TestLessonModel(TestCase):
     
     
   def test_if_lesson_model_fields_have_correct_data_types_in_columns(self) -> None:
-    module = importlib.import_module("api.models.lesson")
+    module = importlib.import_module("courses.models.lesson")
     class_ = module.Lesson
     self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
     self.assertIsInstance(class_._meta.get_field("content"), models.CharField)
@@ -43,7 +43,7 @@ class TestLessonModel(TestCase):
     self.assertIsInstance(class_._meta.get_field("updated_at"), models.DateTimeField)
  
   def test_if_lesson_fields_have_correct_configurations(self) -> None:
-    module = importlib.import_module("api.models.lesson")
+    module = importlib.import_module("courses.models.lesson")
     class_ = module.Lesson
     content_field = class_._meta.get_field("content")
     self.assertFalse(content_field.null)

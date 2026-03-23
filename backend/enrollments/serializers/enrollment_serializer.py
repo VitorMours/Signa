@@ -1,6 +1,9 @@
 from rest_framework import serializers 
-from api.models import Class, Student, Enrollment 
 from uuid import UUID
+
+from classes.models.classroom import Class
+from enrollments.models.enrollment import Enrollment
+from users.models.student import Student
 
 
 # FIXME: Need to creathe the metohds for theserialzier to work in the correct wayu and revise the testss

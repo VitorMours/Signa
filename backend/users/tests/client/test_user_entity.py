@@ -3,7 +3,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 import importlib
 import inspect
-from api.models.user import CustomUser
+from users.models.user import CustomUser
 import json
 from uuid import uuid4
 from rest_framework import status

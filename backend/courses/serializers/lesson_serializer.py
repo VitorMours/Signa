@@ -1,7 +1,9 @@
 from rest_framework import serializers 
-from api.models import Lesson, Subject 
 from uuid import UUID 
-from datetime import date 
+from datetime import date
+
+from courses.models.lesson import Lesson
+from courses.models.subject import Subject 
 
 class LessonSerializer(serializers.Serializer):
   id = serializers.UUIDField(read_only=True)

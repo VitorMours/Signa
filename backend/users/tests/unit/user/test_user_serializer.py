@@ -1,6 +1,6 @@
 from django.test import TestCase 
 from rest_framework import serializers
-from api.models import CustomUser
+from users.models import CustomUser
 import inspect 
 import importlib
 
@@ -10,23 +10,23 @@ class TestUserSerializer(TestCase):
   
   def test_if_can_import_class_in_the_module(self) -> None:
     try:
-      from api.serializers.user_serializer import UserSerializer
+      from users.serializers.user_serializer import UserSerializer
     except ImportError:
       raise ImportError("Was not possible to import user serializer")
     
   def test_if_user_serializer_its_correct_superclass(self) -> None:
-    module = importlib.import_module("api.serializers.user_serializer")
+    module = importlib.import_module("users.serializers.user_serializer")
     class_ = module.UserSerializer
     self.assertTrue(issubclass(class_, serializers.Serializer))
   
   # def test_if_serializer_have_correct_fields(self) -> None:
-  #   module = importlib.import_module("api.serializers.user_serializer")
+  #   module = importlib.import_module("users.serializers.user_serializer")
   #   class_ = module.UserSerializer 
   #   attributes = [attr for attr in dir(class_) if not attr.startswith('__')]
   #   self.assertTrue(set(self.expected_fields).issubset(set(attributes)))
     
   def test_if_user_serializer_have_correct_methods(self) -> None:
-    module = importlib.import_module("api.serializers.user_serializer")
+    module = importlib.import_module("users.serializers.user_serializer")
     class_ = module.UserSerializer 
     create_method = getattr(class_, "create")
     update_method = getattr(class_, "update")
@@ -42,7 +42,7 @@ class TestUserSerializer(TestCase):
       raise AssertionError("UserSerializer should have a delete method")
     
   def test_if_correct_fields_are_required(self) -> None:
-    module = importlib.import_module("api.serializers.user_serializer")
+    module = importlib.import_module("users.serializers.user_serializer")
     class_ = module.UserSerializer()
     first_name_field = class_.fields["first_name"]
     last_name_field = class_.fields["last_name"] 
@@ -54,7 +54,7 @@ class TestUserSerializer(TestCase):
     self.assertTrue(password_field.required)
     
   def test_if_fields_have_correct_types(self) -> None:
-    module = importlib.import_module("api.serializers.user_serializer")
+    module = importlib.import_module("users.serializers.user_serializer")
     class_ = module.UserSerializer()
     fields = class_.fields
 
@@ -79,7 +79,7 @@ class TestUserSerializer(TestCase):
     self.assertTrue(fields["last_name"].required)
     
   def test_if_create_method_works_correctly(self) -> None:
-    module = importlib.import_module("api.serializers.user_serializer")
+    module = importlib.import_module("users.serializers.user_serializer")
     class_ = module.UserSerializer
     serializer = class_()
     user_data = {
@@ -95,19 +95,19 @@ class TestUserSerializer(TestCase):
     self.assertEqual(user.email, user_data["email"])
     
   def test_if_validate_method_exists(self) -> None:
-    module = importlib.import_module("api.serializers.user_serializer")
+    module = importlib.import_module("users.serializers.user_serializer")
     class_ = module.UserSerializer()
     self.assertTrue(hasattr(class_, "validate_email"))
 
   def test_if_validate_method_have_correct_signature(self) -> None:
-    module = importlib.import_module("api.serializers.user_serializer")
+    module = importlib.import_module("users.serializers.user_serializer")
     class_ = module.UserSerializer()
     signature = inspect.signature(class_.validate_email)
     parameters = list(signature.parameters.keys())
     self.assertTrue(parameters[0] == "value")
 
   def test_if_validate_method_raises_validation_error_in_wrong_email(self) -> None:
-    module = importlib.import_module("api.serializers.user_serializer")
+    module = importlib.import_module("users.serializers.user_serializer")
     class_ = module.UserSerializer()
     with self.assertRaises(serializers.ValidationError):
       class_.validate_email("emailemail.com")

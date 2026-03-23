@@ -9,7 +9,7 @@ class TestCourseModel(TestCase):
   
   def test_if_module_exists(self) -> None:
     try:
-      from api.models import course
+      from courses.models import course
       self.assertIsNotNone(course)
       
     except ModuleNotFoundError:
@@ -17,19 +17,19 @@ class TestCourseModel(TestCase):
   
   def test_if_can_import_class_module(self) -> None:
     try:
-      from api.models.course import Course 
+      from courses.models.course import Course 
       self.assertIsNotNone(Course)
       self.assertTrue(inspect.isclass(Course))
     except ImportError:
       raise ImportError("Was not possible to import the couse model")
   
   def test_if_class_have_correct_superclass(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course 
     self.assertTrue(issubclass(class_, models.Model))
   
   def test_if_course_model_have_correct_fields(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course
     self.assertTrue(hasattr(class_, "id"))
     self.assertTrue(hasattr(class_, "name"))
@@ -43,7 +43,7 @@ class TestCourseModel(TestCase):
     self.assertTrue(hasattr(class_, "updated_at"))
   
   def test_if_course_model_have_correct_field_types(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course
     self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
     self.assertIsInstance(class_._meta.get_field("name"), models.CharField)
@@ -57,7 +57,7 @@ class TestCourseModel(TestCase):
     self.assertIsInstance(class_._meta.get_field("updated_at"), models.DateTimeField)
   
   def test_if_course_model_id_field_have_correct_constraint(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course
     id_field = class_._meta.get_field("id")
     self.assertTrue(id_field.unique)
@@ -66,7 +66,7 @@ class TestCourseModel(TestCase):
     self.assertFalse(id_field.editable)
     
   def test_if_couse_model_name_field_have_correct_constraints(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course 
     name_field = class_._meta.get_field("name")
     self.assertEqual(name_field.max_length, 30)
@@ -75,21 +75,21 @@ class TestCourseModel(TestCase):
     self.assertFalse(name_field.blank)
   
   def test_if_course_description_field_have_correct_constraints(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course 
     description_field = class_._meta.get_field("description")
     self.assertTrue(description_field.editable)
     self.assertEqual(description_field.max_length, 125)
 
   def test_if_course_teatcher_field_have_correct_constraints(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course
     teatcher_field = class_._meta.get_field("teatcher")
     self.assertIsNotNone(teatcher_field)
     self.assertTrue(teatcher_field.null)
      
   def test_if_course_total_semesters_field_have_correct_constraints(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course
     total_semesters_field = class_._meta.get_field("total_semesters")
     self.assertIsNotNone(total_semesters_field)
@@ -100,7 +100,7 @@ class TestCourseModel(TestCase):
     pass 
   
   def test_if_actual_semester_field_have_correct_constraints(self) -> None:
-    module = importlib.import_module("api.models.course")
+    module = importlib.import_module("courses.models.course")
     class_ = module.Course
     actual_semesters_field = class_._meta.get_field("actual_semester")
     self.assertFalse(actual_semesters_field.blank)

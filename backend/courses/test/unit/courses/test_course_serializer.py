@@ -2,7 +2,7 @@ import importlib
 import inspect 
 from rest_framework import serializers
 from django.test import TestCase
-from api.models.course import Course 
+from courses.models.course import Course 
 from datetime import date
 
 class TestCourseSerializer(TestCase):
@@ -20,7 +20,7 @@ class TestCourseSerializer(TestCase):
   
   def test_if_can_import_the_module(self) -> None:
     try:
-      from api.serializers import course_serializer
+      from courses.serializers import course_serializer
       self.assertIsNotNone(course_serializer)
     except ImportError:
       raise ImportError("Was not possible to import the course serializer")
@@ -28,19 +28,19 @@ class TestCourseSerializer(TestCase):
     
   def test_if_can_import_course_serializer(self) -> None:
     try:
-      from api.serializers.course_serializer import CourseSerializer
+      from courses.serializers.course_serializer import CourseSerializer
       self.assertIsNotNone(CourseSerializer)
     except ImportError:
       raise ImportError("Was not possible to import the course serializer")
     
   def test_if_course_serializer_have_correct_superclass(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer 
     self.assertIsNotNone(class_)
     self.assertTrue(issubclass(class_, serializers.Serializer))
     
   def test_if_course_serializer_have_correct_fields(self) -> None:
-      module = importlib.import_module("api.serializers.course_serializer")
+      module = importlib.import_module("courses.serializers.course_serializer")
       serializer_instance = module.CourseSerializer()
       
       fields_to_check = [
@@ -52,7 +52,7 @@ class TestCourseSerializer(TestCase):
           self.assertIn(field, serializer_instance.fields, f"Campo {field} não encontrado no dicionário fields do Serializer")
     
   def test_if_course_serializer_fields_have_correct_field_types(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     fields = class_.fields
     self.assertIsInstance(fields.get("id"), serializers.UUIDField)
@@ -67,7 +67,7 @@ class TestCourseSerializer(TestCase):
     self.assertIsInstance(fields.get("updated_at"), serializers.DateTimeField)
     
   def test_if_serializer_fields_have_correct_read_only_constraints(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     id_field = class_.fields.get("id")
     self.assertTrue(id_field.read_only)
@@ -77,24 +77,24 @@ class TestCourseSerializer(TestCase):
     self.assertTrue(updated_at_field.read_only)
     
   def test_if_course_serializer_have_create_method(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer
     self.assertTrue(hasattr(class_, "create"))
     
   def test_if_create_method_have_the_correct_signature_method(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     signature = inspect.signature(class_.create)
     parameters = list(signature.parameters.keys())
     self.assertEqual(parameters[0], "validated_data")
     
   def test_if_course_serializer_have_update_method(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer
     self.assertTrue(hasattr(class_, "update"))
     
   def test_if_update_have_the_correct_signature_method(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     signature = inspect.signature(class_.update)
     parameters = list(signature.parameters.keys())
@@ -102,12 +102,12 @@ class TestCourseSerializer(TestCase):
     self.assertEqual(parameters[1], "validated_data")
     
   def test_if_course_serializer_have_delete_method(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     self.assertTrue(hasattr(class_, "delete"))
     
   def test_if_course_serializer_delete_method_have_correct_signature(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer
     signature = inspect.signature(class_.delete)
     parameters = list(signature.parameters.keys())
@@ -115,13 +115,13 @@ class TestCourseSerializer(TestCase):
     self.assertEqual(parameters[1], "instance_id")
     
   def test_if_create_serializer_method_works(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")    
+    module = importlib.import_module("courses.serializers.course_serializer")    
     class_ = module.CourseSerializer()
     course = class_.create(self.mock_course)
     self.assertIsInstance(course, Course)
        
   def test_if_update_serializer_works(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     course = class_.create(self.mock_course)
     updated_course = class_.update(course,
@@ -138,7 +138,7 @@ class TestCourseSerializer(TestCase):
     self.assertTrue(updated_course.name == "Serializers e modelos")
 
   def test_if_delete_serializer_method_works(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     course = class_.create(self.mock_course)
     searched_course = Course.objects.get(id=course.id)
@@ -148,12 +148,12 @@ class TestCourseSerializer(TestCase):
     self.assertFalse(searched_course)
 
   def test_if_course_serializer_have_validate_method(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     self.assertTrue(hasattr(class_, "validate"))
     
   def test_if_validate_course_serializer_method_have_correct_signature(self) -> None:
-    module = importlib.import_module("api.serializers.course_serializer")
+    module = importlib.import_module("courses.serializers.course_serializer")
     class_ = module.CourseSerializer()
     signature = inspect.signature(class_.validate)
     parameters = list(signature.parameters.keys())

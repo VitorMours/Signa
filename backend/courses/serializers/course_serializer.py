@@ -1,6 +1,8 @@
 from rest_framework import serializers 
-from api.models import Course, Teatcher
 from uuid import UUID
+
+from courses.models.course import Course
+from users.models.teatcher import Teatcher
 
 class CourseSerializer(serializers.Serializer):
   """
