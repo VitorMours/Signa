@@ -14,8 +14,6 @@ class UserSerializer(serializers.Serializer):
   created_at = serializers.DateTimeField(read_only=True)
   updated_at = serializers.DateTimeField(read_only=True)
 
-  # TODO: Adicionar metodo par avalidar email para nao criar usuarios dupçicados
-
   def validate_email(self, value: str) -> str:
     current_id = self.instance.id if self.instance else None
     try:

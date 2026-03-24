@@ -1,4 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from users.models.student import Student
 from users.serializers.student_serializer import StudentSerializer
 
@@ -14,4 +15,8 @@ class StudentViewSet(ModelViewSet):
   serializer_class = StudentSerializer
   authentication_classes = []
   queryset = Student.objects.all()
-  
+
+
+# TODO: Configurate and create the student profile view
+class StudentProfileView(APIView):
+  pass
