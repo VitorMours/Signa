@@ -28,3 +28,5 @@ class TestUserViewSet(TestCase):
     module = importlib.import_module("users.views.user")
     class_ = module.UserViewSet
     pass
+
+
