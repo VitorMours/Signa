@@ -10,3 +10,5 @@ class TestLoginSerializer(TestCase):
   
   def test_if_is_running(self) -> None:
     self.assertTrue(True)
+    
+    
