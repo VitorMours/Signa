@@ -1,6 +1,6 @@
 from rest_framework import routers 
 from django.urls import path
-from backend.authentication.views.login_view import CustomTokenView
+from authentication.views.login_view import CustomTokenView
 
 app_name = "authentication"
 router = routers.DefaultRouter()
