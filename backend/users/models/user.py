@@ -45,12 +45,15 @@ class CustomUser(AbstractUser):
   username=None
   date_joined = None
   id = models.UUIDField(primary_key=True, null=False, blank=False, default = uuid.uuid4, editable=False)
-  first_name = models.CharField(max_length=50)
-  last_name = models.CharField(max_length=50)
+  first_name = models.CharField(max_length=50, blank=False, null=False)
+  last_name = models.CharField(max_length=50, blank=False, null=False)
   email = models.EmailField(unique=True, blank=False, null=False)
   password = models.CharField(blank=False, null=False)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
+  
+  is_active    = models.BooleanField(default=True)
+  is_staff     = models.BooleanField(default=False)
   
   USERNAME_FIELD = "email"
   REQUIRED_FIELDS=[ "first_name" ]

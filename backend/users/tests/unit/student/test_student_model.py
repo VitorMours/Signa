@@ -7,12 +7,9 @@ from users.models.user import CustomUser
 class TestStudentModel(TestCase):
   def setUp(self) -> None:
     self.parameters_list = [
-      "first_name",
-      "last_name",
-      "email",
-      "password",
-      "craeted_at",
-      "updated_at",
+      "user",
+      "enrollment_date",
+      "grade",
     ]
   
   def test_if_can_import_the_class(self) -> None:
@@ -24,17 +21,13 @@ class TestStudentModel(TestCase):
   def test_if_student_model_have_correct_superclass(self) -> None:
     module = importlib.import_module("users.models.student")
     class_ = module.Student 
-    self.assertTrue(issubclass(class_, CustomUser))
+    self.assertTrue(issubclass(class_, models.Model))
   
   def test_if_student_model_have_correct_fields_and_correct_types(self) -> None:
     module = importlib.import_module("users.models.student")
     class_ = module.Student
-    self.assertIsInstance(class_._meta.get_field("id"), models.UUIDField)
-    self.assertIsInstance(class_._meta.get_field("first_name"), models.CharField)
-    self.assertIsInstance(class_._meta.get_field("last_name"), models.CharField)
-    self.assertIsInstance(class_._meta.get_field("email"), models.EmailField)
-    self.assertIsInstance(class_._meta.get_field("password"), models.CharField)
-    self.assertIsInstance(class_._meta.get_field("created_at"), models.DateTimeField)
-    self.assertIsInstance(class_._meta.get_field("updated_at"), models.DateTimeField)
+    self.assertIsInstance(class_._meta.get_field("user"), models.OneToOneField)
+    self.assertIsInstance(class_._meta.get_field("enrollment_date"), models.DateField)
+    self.assertIsInstance(class_._meta.get_field("grade"), models.CharField)
     
   
