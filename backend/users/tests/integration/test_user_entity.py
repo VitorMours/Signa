@@ -16,6 +16,7 @@ class TestUserEntity(TestCase):
             email="rezendemoura@gmail.com",
             password="32322916aA!"
         )
+        
         refresh = RefreshToken.for_user(self.mock_user)
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {refresh.access_token}")
 
