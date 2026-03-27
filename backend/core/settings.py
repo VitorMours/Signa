@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,7 +25,6 @@ SECRET_KEY = "django-insecure-r=2zxnf6d7^x)k738z%+_dc+onk&!w--hi$a%3p+=^*pz@_jzx
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-AUTH_USER_MODEL = "api.CustomUser"
 
 ALLOWED_HOSTS = []
 
@@ -40,9 +40,17 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
-    "api"
+    "authentication",
+    "users",
+    "classes",
+    "courses",
+    "enrollments",
+    "tools",
 ]
+AUTH_USER_MODEL = "users.CustomUser"
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -79,8 +87,19 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite",
     }
+}
+
+CACHE = {
+    "default" : {
+        "BACKEND":"django_redis.cache.RedisCache",
+        "LOCATION":"redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS":"django_redis.client.DefaultClient"
+        }
+    }
+    
 }
 
 
@@ -124,6 +143,29 @@ STATIC_URL = "static/"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    "DEFAULT_PERMISSION_CLASSES":[
+        "rest_framework.permissions.IsAuthenticated"
+    ]
 }
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT Token. Formato: Bearer <token>'
+        }
+    },
+    'USE_SESSION_AUTH': False,  # desliga o basic auth do swagger
+    'JSON_EDITOR': True,
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS':  True,
+    'BLACKLIST_AFTER_ROTATION': False,  # ← desliga a blacklist do simplejwt
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}

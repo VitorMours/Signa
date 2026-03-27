@@ -17,7 +17,6 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include, re_path
-from api.urls import api_urlpatterns
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -26,18 +25,25 @@ schema_view = get_schema_view(
    openapi.Info(
       title="Signa API",
       default_version='v0.0.1',
-      description="Backend especificado para o funcionamento do signa sem a parte de IA",
-      contact=openapi.Contact(email="contact@snippets.local"),
+      description="Signa Backend",
+      contact=openapi.Contact(email="jvrezendemoura@gmail.com"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
+   authentication_classes=[],
 )
 
+api_urlpatterns = [
+    path('users/', include('users.routes.users_urls', namespace="users")),  
+    path('teatchers/', include('users.routes.teatchers_urls', namespace="teatchers")),  
+    path('students/', include('users.routes.students_urls', namespace="students")),  
+    path('auth/', include('authentication.urls', namespace="authentication")),  
+]
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include(api_urlpatterns)),
+    path('api/', include(api_urlpatterns)),
     path('docs<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
