@@ -28,6 +28,6 @@ class TestStudentModel(TestCase):
     class_ = module.Student
     self.assertIsInstance(class_._meta.get_field("user"), models.OneToOneField)
     self.assertIsInstance(class_._meta.get_field("enrollment_date"), models.DateField)
-    self.assertIsInstance(class_._meta.get_field("grade"), models.CharField)
+    self.assertIsInstance(class_._meta.get_field("grade"), models.IntegerField)
     
   
