@@ -2,7 +2,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from users.models.student import Student
 from users.serializers.student_serializer import StudentSerializer
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class StudentViewSet(ModelViewSet):
   """
@@ -11,9 +12,9 @@ class StudentViewSet(ModelViewSet):
     read_only: created_at, updated_at
     write_only: password
   """
-  
+  permission_classes = [IsAuthenticated]
   serializer_class = StudentSerializer
-  authentication_classes = []
+  authentication_classes = [JWTAuthentication]
   queryset = Student.objects.all()
 
 

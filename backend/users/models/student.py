@@ -27,7 +27,7 @@ class Student(models.Model):
     primary_key=True,
   )
   enrollment_date = models.DateField(auto_now_add=True)
-  grade = models.CharField(max_length=10, blank=True)
+  grade = models.IntegerField(null=True, blank=False)
   
   class Meta:
     app_label="users"

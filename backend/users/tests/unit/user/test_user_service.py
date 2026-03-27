@@ -29,3 +29,6 @@ class TestUserService(TestCase):
   
   def test_if_user_service_have_update_user_method(self) -> None:
     pass
+  
+  def test_if_user_service_have_check_user_by_credentials_method(self) -> None:
+    pass

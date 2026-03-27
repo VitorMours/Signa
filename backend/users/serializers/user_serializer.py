@@ -1,6 +1,7 @@
 from rest_framework import serializers 
 from django.core.validators import validate_email as django_validate_email
 from users.models.user import CustomUser
+
 class UserSerializer(serializers.Serializer):
   """
   User serializer with some security and some read_only fields for privacy and 

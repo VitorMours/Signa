@@ -7,3 +7,7 @@ class AuthService:
   @staticmethod
   def register(data: dict) -> dict:
     pass
+  
+  @staticmethod 
+  def login(data: dict) -> None:
+    pass  
