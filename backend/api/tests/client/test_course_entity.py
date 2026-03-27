@@ -75,7 +75,6 @@ class TestCourseEntity(TestCase):
       new_response = self.client.delete(f"/api/courses/{data["id"]}/")
       self.assertEqual(new_response.status_code, status.HTTP_204_NO_CONTENT)
 
-
   def test_if_course_resource_accept_to_get_user_by_id(self) -> None:
       response = self.client.post("/api/courses/", self.mock_course_data)
       self.assertEqual(response.status_code, status.HTTP_201_CREATED)
