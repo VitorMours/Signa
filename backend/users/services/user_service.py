@@ -6,6 +6,10 @@ from uuid import UUID
 class UserService:
 
   @staticmethod 
+  def get_all_users() -> List[CustomUser]:
+    pass
+
+  @staticmethod 
   def get_user_by_id() -> CustomUser:
     try:
       pass

@@ -22,38 +22,39 @@ class TestStudentSerializer(TestCase):
             "user_id": str(self.user.id),
         }
 
+    def test_if_can_import_the_module(self) -> None:
+        try:
+            from users.serializers import student_serializer 
+            self.assertIsNotNone(student_serializer)
+        except ImportError:
+            raise ImportError("Was not possible to import the user module")
+
+    def test_if_can_import_student_serializer(self) -> None:
+        try:
+            from users.serializers.student_serializer import StudentSerializer
+            self.assertIsNotNone(StudentSerializer)
+            self.assertTrue(issubclass(StudentSerializer, serializers.ModelSerializer))
+        except ImportError:
+            raise ImportError("Was not possible to import the user serializer")
 
     def test_serializer_fields_content(self) -> None:
-        """Verifica se os campos esperados estão no serializer (incluindo write_only)"""
         serializer = StudentSerializer()
         fields = serializer.fields.keys()
-        
         self.assertIn('user', fields)
         self.assertIn('user_id', fields)
 
-    # --- TESTES DE LÓGICA ---
-
     def test_serialization_output(self) -> None:
-        """Testa a SAÍDA (Model -> JSON)"""
         serializer = StudentSerializer(instance=self.student)
         data = serializer.data
-        
-        # O 'user' deve vir populado pelo UserSerializer (aninhado)
         self.assertEqual(data['user']['email'], self.user.email)
-        
-        # CORREÇÃO: 'user_id' é WRITE_ONLY, então ele NÃO deve estar no data da saída.
         self.assertNotIn('user_id', data)
-        
-        # O ID do usuário geralmente está dentro do objeto 'user' na saída
         self.assertEqual(str(data['user']['id']), str(self.user.id))
 
     def test_deserialization_validation(self) -> None:
         """Testa a ENTRADA (JSON -> Model)"""
-        # Aqui o 'user_id' DEVE funcionar pois é write_only
         serializer = StudentSerializer(data=self.valid_payload)
         
         self.assertTrue(serializer.is_valid(), serializer.errors)
-        # No validated_data, o 'user_id' é mapeado para a instância 'user' (devido ao source='user')
         self.assertEqual(serializer.validated_data['user'], self.user)
 
     def test_read_only_fields(self) -> None:
@@ -63,7 +64,6 @@ class TestStudentSerializer(TestCase):
         
         serializer = StudentSerializer(data=payload)
         self.assertTrue(serializer.is_valid())
-        # Não deve estar no validated_data para não sobrescrever o banco
         self.assertNotIn('enrollment_date', serializer.validated_data)
 
     def test_custom_user_manager_logic(self) -> None:
