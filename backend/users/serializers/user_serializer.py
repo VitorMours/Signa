@@ -24,24 +24,3 @@ class UserSerializer(serializers.Serializer):
     if CustomUser.objects.filter(email=value).exclude(id=current_id).exists():
       raise serializers.ValidationError("Este email já está em uso.")
     return value  
-      
-
-  def create(self, validated_data) -> CustomUser:
-    return CustomUser.objects.create_user(**validated_data)
-  
-  def update(self, instance, validated_data) -> CustomUser:
-    instance.email = validated_data.get("email", instance.email)
-    instance.first_name = validated_data.get("first_name", instance.first_name)
-    instance.last_name = validated_data.get("last_name", instance.last_name)
-  
-    if "password" in validated_data:
-      instance.set_password(validated_data["password"])
-  
-    instance.save()
-    return instance
-  
-  def delete(self, instance) -> bool:
-    instance.is_active = False 
-    instance.save()
-    return True
-  
