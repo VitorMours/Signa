@@ -22,7 +22,8 @@ class TestUserService(TestCase):
       raise ImportError("Was not possible to import the user service")
     
   def test_if_user_service_have_check_credentials_in_database_method(self) -> None:
-    pass
+    module = importlib.import_module("users.services.user_service")
+    class_ = module.UserService
   
   def test_if_user_service_have_create_user_method(self) -> None:
     pass 
