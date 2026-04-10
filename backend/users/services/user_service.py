@@ -1,6 +1,5 @@
-from users.models import CustomUser 
-from typing import Optional, List 
 from users.models.user import CustomUser
+from typing import Optional, List 
 from uuid import UUID 
 from django.db import transaction
 
@@ -8,14 +7,16 @@ class UserService:
 
   @staticmethod 
   def get_all_users() -> List[CustomUser]:
-    pass
+    return list(CustomUser.objects.all())
 
   @staticmethod 
-  def get_user_by_id() -> CustomUser:
+  def get_user_by_id(user_id: UUID) -> Optional[CustomUser]:
     try:
-      pass
-    except Exception:
-      raise Exception
+      return CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+      return None
+    except Exception as e:
+      raise Exception(f"Error retrieving user: {e}")
     
   @staticmethod
   @transaction.atomic
@@ -34,21 +35,37 @@ class UserService:
   @staticmethod 
   def update_user(instance: CustomUser, validated_data: dict) -> CustomUser:
     try:
-      if user := UserService._check_user_by_credentials(uuid=instance.id):
-        for attr, value in validated_data.items():
-          user.setattr(attr, value)   
-      else:
-        raise ValueError("There is no user with the given credentials")  
-    
+      user = instance
+      for attr, value in validated_data.items():
+        setattr(user, attr, value)
+      user.save()
+      return user
     except Exception as e:
       raise Exception(f"There was a problem with the user update: {e}")
     
   @staticmethod 
-  def deactivate_user() -> CustomUser:
-    pass  
+  def deactivate_user(user_id: UUID) -> bool:
+    try:
+      user = CustomUser.objects.get(id=user_id)
+      user.is_active = False
+      user.save()
+      return True
+    except CustomUser.DoesNotExist:
+      return False
+    except Exception as e:
+      raise Exception(f"Error deactivating user: {e}")  
   
   @staticmethod 
-  def _check_user_by_credentials(email: str = None, uuid: UUID = None) -> None:
+  def _check_user_by_credentials(email: str = None, uuid: UUID = None) -> Optional[CustomUser]:
     if email is None and uuid is None:
       raise ValueError("The value of the email or the value of the uuid need to be filled")
+    try:
+      if email:
+        return CustomUser.objects.get(email=email)
+      elif uuid:
+        return CustomUser.objects.get(id=uuid)
+    except CustomUser.DoesNotExist:
+      return None
+    except Exception as e:
+      raise Exception(f"Error checking user credentials: {e}")
     

@@ -50,7 +50,16 @@ class TestUserService(TestCase):
   def test_if_user_service_create_user_method_works(self) -> None:
     module = importlib.import_module("users.services.user_service")
     class_ = module.UserService
-    result = class_.create_user()
+    validated_data = {
+      "first_name": "Test",
+      "last_name": "User",
+      "email": "test@example.com",
+      "password": "password123"
+    }
+    result = class_.create_user(validated_data)
+    self.assertIsNotNone(result)
+    self.assertEqual(result.first_name, "Test")
+    self.assertEqual(result.email, "test@example.com")
 
   
   def test_if_user_service_get_all_users_method_works(self) -> None:
