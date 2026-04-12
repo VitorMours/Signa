@@ -10,7 +10,6 @@ class UserService:
     return list(CustomUser.objects.all())
 
   @staticmethod
-    
   def get_user_by_id(user_id: UUID) -> Optional[CustomUser]:
     try:
       return CustomUser.objects.get(id=user_id)
@@ -34,6 +33,7 @@ class UserService:
       raise Exception(f"There was a problem with the user creation: {e}")
   
   @staticmethod 
+  @transaction.atomic
   def update_user(instance: CustomUser, validated_data: dict) -> CustomUser:
     try:
       user = instance
@@ -52,7 +52,7 @@ class UserService:
       user.save()
       return True
     except CustomUser.DoesNotExist:
-      return False
+      raise ValueError("User not found")
     except Exception as e:
       raise Exception(f"Error deactivating user: {e}")  
   

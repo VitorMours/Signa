@@ -61,7 +61,6 @@ class TestUserService(TestCase):
     self.assertEqual(result.first_name, "Test")
     self.assertEqual(result.email, "test@example.com")
 
-  
   def test_if_user_service_get_all_users_method_works(self) -> None:
     module = importlib.import_module("users.services.user_service")
     class_ = module.UserService 
@@ -69,5 +68,53 @@ class TestUserService(TestCase):
     result = class_.get_all_users()
     self.assertIsInstance(result, list)
     self.assertEqual(len(result), 0)
+    validated_data = {
+      "first_name": "Test",
+      "last_name": "User",
+      "email": "test@example.com",
+      "password": "password123"
+    }
+    result = class_.create_user(validated_data)
+    self.assertIsNotNone(result)
+    self.assertEqual(result.first_name, "Test")
+    self.assertEqual(result.email, "test@example.com")
+    result = class_.get_all_users()
+    self.assertIsInstance(result, list)
+    self.assertEqual(len(result), 1)
+  
+  def test_if_user_service_get_user_by_id_method_works(self) -> None:
+    module = importlib.import_module("users.services.user_service")
+    class_ = module.UserService 
+    result = class_.get_user_by_id("00000000-0000-0000-0000-000000000000")
+    self.assertIsNone(result)
+    validated_data = {
+      "first_name": "Test",
+      "last_name": "User",
+      "email": "jvrezendemoura@gmail.com",
+      "password":"password123"
+    }
+    result = class_.create_user(validated_data)
+    self.assertIsNotNone(result)
+    result = class_.get_user_by_id(result.id)
+    self.assertIsNotNone(result)
+    self.assertEqual(result.first_name, "Test")
+    self.assertEqual(result.email, "jvrezendemoura@gmail.com")
     
+  def test_if_user_service_deactivate_user_method_works(self) -> None:
+    module = importlib.import_module("users.services.user_service")
+    class_ = module.UserService
+    with self.assertRaises(ValueError):
+      class_.deactivate_user("00000000-0000-0000-0000-000000000000")
     
+    validated_data = {
+      "first_name": "Test",
+      "last_name": "User",
+      "email": "jvrezendemoura@gmail.com",
+      "password":"password123"
+    }
+    result = class_.create_user(validated_data)
+    self.assertIsNotNone(result)
+    result = class_.deactivate_user(result.id)
+    self.assertTrue(result)
+    
+  
