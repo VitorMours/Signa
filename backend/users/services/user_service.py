@@ -9,7 +9,8 @@ class UserService:
   def get_all_users() -> List[CustomUser]:
     return list(CustomUser.objects.all())
 
-  @staticmethod 
+  @staticmethod
+    
   def get_user_by_id(user_id: UUID) -> Optional[CustomUser]:
     try:
       return CustomUser.objects.get(id=user_id)
