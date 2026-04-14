@@ -10,42 +10,55 @@ class StudentService:
   
   @staticmethod 
   def get_student_by_id(student_id: str) -> Student | None:
-    pass
+    try:
+      return Student.objects.get(id=student_id)
+    except Student.DoesNotExist:
+      return None
+    except Exception as e:
+      raise Exception(f"Error retrieving student: {e}")
   
   @staticmethod 
   @transaction.atomic
   def create_student(validated_data: dict) -> Student:
     try:
-      #result = StudentService._check_student_by_credentials(email=validated_data.get("email"), uuid=None)
-      if result is not None:
-        raise ValueError("Student with this email already exists")
-      
-      student = Student.objects.create_user(
-        first_name = validated_data["first_name"],
-        last_name = validated_data["last_name"],
-        email = validated_data["email"],
-        password = validated_data["password"]
-      )
-      return student
-      
+      if default_user := UserService.create_user(validated_data):
+        student = Student.objects.create(user = default_user)
+        return student
     except Exception as e:
       raise Exception(f"There was a problem with the student creation: {e}")
   
   @staticmethod 
   @transaction.atomic
-  def update_student(instance: Student, validated_data:dict) -> Student:
-    pass
+  def update_student(instance: Student, validated_data: dict) -> Student:
+    try:
+      for attr, value in validated_data.items():
+        if hasattr(instance, attr):
+          setattr(instance, attr, value)
+        elif hasattr(instance.user, attr):
+          setattr(instance.user, attr, value)
+      instance.save()
+    except Exception as e:
+      raise Exception(f"There was a problem with the student update: {e}")
   
   @staticmethod
   @transaction.atomic
   def deactivate_student(student_id: str) -> bool:
-    pass
+    try:
+      student = Student.objects.get(id=student_id)
+      student.is_active = False
+      student.save()
+      return True
+    except Student.DoesNotExist:
+      return False
+    except Exception as e:
+      raise Exception(f"There was a problem with the student deactivation: {e}")
   
   @staticmethod 
-  def _check_student_by_credentials(student: Student) -> CustomUser | None:
-    if student is None:
-      raise ValueError("You need to specify the student")
-    else:
-      return True
-  
+  def _check_student_by_credentials(student: Student) -> bool:
+    try:
+      if result := UserService._check_user_by_credentials(email=student.user.email):
+        return True
+      return False
+    except Exception as e:
+      raise Exception("Was not possible to search for the user by credentials: " + str(e))
   

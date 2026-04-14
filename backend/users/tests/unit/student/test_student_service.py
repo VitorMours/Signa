@@ -56,7 +56,7 @@ class TestStudentService(TestCase):
     class_ = module.StudentService 
     self.assertTrue(hasattr(class_, "_check_student_by_credentials"))
   
-  def test_if_student_service_craete_student_method_works(self) -> None:
+  def test_if_student_service_create_student_method_works(self) -> None:
     module = importlib.import_module("users.services.student_service")
     class_ = module.StudentService
     validated_data = {
@@ -67,7 +67,7 @@ class TestStudentService(TestCase):
     }
     result = class_.create_student(validated_data)
     self.assertIsInstance(result, Student)
-    self.assertEqual(result.first_name, validated_data["first_name"])
+    self.assertEqual(result.user.first_name, validated_data["first_name"])
   
   def test_if_student_service_get_all_students_method_works(self) -> None:
     module = importlib.import_module("users.services.student_service")
@@ -85,27 +85,35 @@ class TestStudentService(TestCase):
     result = class_.get_all_students()
     self.assertEqual(len(result), 1)
   
-  # def test_if_student_service_check_student_by_credentials_works(self) -> None:
-  #   module = importlib.import_module("users.services.student_service")
-  #   class_ = module.StudentService
+  def test_if_student_service_check_student_by_credentials_works(self) -> None:
+    module = importlib.import_module("users.services.student_service")
+    class_ = module.StudentService
     
-  #   validated_data = {
-  #     "first_name": "Test",
-  #     "last_name": "Student",
-  #     "email": "teststudent@example.com",
-  #     "password":"password"
-  #   }
-    
-  #   # Criar um estudante
-  #   student = class_.create_student(validated_data)
-  #   self.assertIsNotNone(student)
-  #   self.assertIsNotNone(student.user)
-    
-  #   # Verificar se o email do usuário responsável é igual ao email do estudante
-  #   result = class_._check_student_by_credentials(student)
-  #   self.assertIsNotNone(result)
-  #   self.assertEqual(result.email, student.user.email)
-  #   self.assertEqual(result.email, validated_data["email"])
+    validated_data = {
+      "first_name": "Test",
+      "last_name": "Student",
+      "email": "teststudent@example.com",
+      "password":"password"
+    }
+    student = class_.create_student(validated_data)
+    self.assertIsNotNone(student)
+    self.assertIsNotNone(student.user)
+    result = class_._check_student_by_credentials(student)
+    self.assertIsNotNone(result)
+    self.assertEqual(result, True)
 
+  def test_if_student_service_deactivate_student_works(self) -> None:
+    module = importlib.import_module("users.services.student_service")
+    class_ = module.StudentService 
+    validated_data = {
+      "first_name":"Test",
+      "last_name":"Test",
+      "email":"test@test.com",
+      "password":"123dev",
+    }
+    student = class_.create_student(validated_data)
+    self.assertIsNotNone(student)
+    self.assertTrue(student.user.is_active) 
+  
 
 
