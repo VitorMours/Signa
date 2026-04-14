@@ -115,5 +115,22 @@ class TestStudentService(TestCase):
     self.assertIsNotNone(student)
     self.assertTrue(student.user.is_active) 
   
+def test_if_student_service_update_student_method_works(self) -> None:
+  module = importlib.import_module("users.services.student_service")
+  class_ = module.StudentService 
+  validated_data = {
+    "first_name":"Test",
+    "last_name":"Test",
+    "email":"test@test.com",
+    "password":"123dev",
+  }
+  student = class_.create_student(validated_data)
+  self.assertIsNotNone(student)
+  self.assertTrue(student.user.is_active) 
+  self.assertTrue(student.user.email == validated_data["email"])
+  student = class_.update_student(student, {"email":"test@dev.com"})
+  self.assertIsNotNone(student)
+  self.assertTrue(student.user.is_active) 
+  self.assertTrue(student.user.email == "test@dev.com")
 
 
