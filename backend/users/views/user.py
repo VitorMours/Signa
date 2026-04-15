@@ -1,23 +1,22 @@
-from rest_framework.viewsets import ModelViewSet 
-from users.models.user import CustomUser
+from rest_framework.views import APIView
 from users.serializers.user_serializer import UserSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.request import Request
+from users.services.user_service import UserService
 
-class UserViewSet(ModelViewSet):
-  """
-  Viewset for the user data in the database, some fields are write_only or read_only.
-    read_only: created_at, updated_at
-    write_only: password
-    
-  The only person that can access this is the admin user
-  """
-  permission_classes = [IsAdminUser]
-  queryset = CustomUser.objects.all()
+class UserView(APIView):
+
   authentication_classes = [JWTAuthentication]
-  serializer_class = UserSerializer
+  permission_classes = [IsAdminUser]
+
+  def get(self, request: Request) -> Response:
+    users = UserService.get_all_users()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
   
-  def get_serializer(self, *args, **kwargs):
-    if self.request.method == "PATCH":
-      kwargs["partial"] = True
-    return super().get_serializer(*args, **kwargs)
+  def delete(self, request: Request, id: str) -> Response:
+    pass
+  
+    
