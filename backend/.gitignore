@@ -4,6 +4,7 @@
 __pycache__/
 .Python
 db.sqlite3
+db.sqlite
 db.sqlite3-journal
 local_settings.py
 sessions/

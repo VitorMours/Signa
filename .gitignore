@@ -1,2 +1,5 @@
 notebooks/
 /notebooks
+db.sqlite
+*.sqlite
+
