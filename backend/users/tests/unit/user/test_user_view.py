@@ -68,15 +68,6 @@ class TestUserView(TestCase):
     self.assertEqual(params[0], "self")
     self.assertEqual(params[1], "request")
   
-  def test_if_user_view_have_delete_method(self) -> None:
-    module = importlib.import_module("users.views.user")
-    class_ = module.UserView
-    self.assertTrue(hasattr(class_, "delete"))
-    signature = inspect.signature(class_.delete)
-    params = list(signature.parameters.keys())
-    self.assertEqual(params[0], "self")
-    self.assertEqual(params[1], "request")
-    self.assertEqual(params[2], "id")
     
   def test_if_user_view_post_method_works(self) -> None:
     module = importlib.import_module("users.views.user")
@@ -110,24 +101,20 @@ class TestUserView(TestCase):
     response = view(request)
     self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-  def test_if_user_view_get_method_works_with_bearer_token(self) -> None:
-    module = importlib.import_module("users.views.user")
-    view = module.UserView.as_view()
-
-    request = self.factory.delete(
-      '/users/',
-      HTTP_AUTHORIZATION=f'Bearer {self.access_token}'
-    )
-    response = view(request)
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-
-
 
 class TestUserSingleView(TestCase):
   def setUp(self) -> None:
-    pass 
+    self.factory = APIRequestFactory()
+    self.user = UserService.create_user(
+      {
+        "first_name":"testuser",
+        "last_name":"token",
+        "email":"email@email.com",
+        "password":"123456"
+      }
+    )
+    refresh = RefreshToken.for_user(self.user)
+    self.access_token = str(refresh.access_token)
   
   def test_if_is_running(self) -> None:
     self.assertTrue(True)
@@ -137,14 +124,102 @@ class TestUserSingleView(TestCase):
     class_ = module.UserSingleView
     self.assertIsNotNone(class_)
   
-  def test_if_user_view_delete_method_works_without_bearer_token(self) -> None:
+  def test_if_class_have_correct_configurations(self) -> None:
     module = importlib.import_module("users.views.user")
-    view = module.UserView.as_view()
+    class_ = module.UserSingleView
+    self.assertEqual(class_.authentication_classes, [JWTAuthentication])
+    self.assertEqual(class_.permission_classes, [IsAuthenticated])
+  
+  def test_if_class_have_get_method(self) -> None:
+    module = importlib.import_module("users.views.user")
+    class_ = module.UserSingleView 
+    self.assertTrue(hasattr(class_, "get"))
+    
+  def test_if_user_single_view_get_method_have_correct_signature(self) -> None:
+    module = importlib.import_module("users.views.user")
+    class_ = module.UserSingleView
+    signature = inspect.signature(class_.get)
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0],"self")
+    self.assertEqual(parameters[1],"request")
+    self.assertEqual(parameters[2],"id")
 
-    request = self.factory.delete('/users/')
-    response = view(request)
-    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+  def test_if_user_single_view_get_method_works(self) -> None:
+    module = importlib.import_module("users.views.user")
+    view = module.UserSingleView.as_view()
+    request = self.factory.get(
+      f'/users/{self.user.id}',
+      HTTP_AUTHORIZATION=f'Bearer {self.access_token}'
+    )
+    response = view(request, id=self.user.id)
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+  def test_if_user_single_view_have_patch_method(self) -> None:
+    module = importlib.import_module("users.views.user")
+    class_ = module.UserSingleView
+    self.assertTrue(hasattr(class_, "patch"))
+  
+  def test_if_user_single_view_patch_method_have_correct_signature(self) -> None:
+    module = importlib.import_module("users.views.user")
+    class_ = module.UserSingleView
+    signature = inspect.signature(class_.patch)
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0], "self")
+    self.assertEqual(parameters[1], "request")
+    self.assertEqual(parameters[2], "id")
+  
+  def test_if_user_single_view_patch_method_works(self) -> None:
+    module = importlib.import_module("users.views.user")
+    view = module.UserSingleView.as_view()
+    request = self.factory.get(
+      f'/users/{self.user.id}/',
+      data={'first_name': 'NovoNome'},   # PATCH precisa de dados
+      content_type='application/json',
+      HTTP_AUTHORIZATION=f'Bearer {self.access_token}'
+    )
+    response = view(request, id=self.user.id)  # pk provavelmente necessário
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+  
+  def test_if_user_single_view_patch_method_use_jwt_authentication(self) -> None:
+    pass
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  def test_if_class_have_delete_method(self) -> None:
+    module = importlib.import_module("users.views.user")
+    class_ = module.UserSingleView
+    self.assertTrue(hasattr(class_, "delete"))
+    
+  def test_if_user_single_view_delete_method_have_correct_signature(self) -> None:
+    module = importlib.import_module("users.views.user")
+    class_ = module.UserSingleView
+    signature = inspect.signature(class_.delete)
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0],"self")
+    self.assertEqual(parameters[1],"request")
+    self.assertEqual(parameters[2],"id")
 
-
-
+  def test_if_user_single_view_delete_method_works(self) -> None:
+    module = importlib.import_module("users.views.user")
+    view = module.UserSingleView.as_view()
+    request = self.factory.delete(
+      f'/users/{self.user.id}',
+     HTTP_AUTHORIZATION=f'Bearer {self.access_token}'
+    )
+    response = view(request, id=self.user.id)
+    self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        
 

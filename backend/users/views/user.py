@@ -54,6 +54,11 @@ class UserSingleView(APIView):
     serializer = UserSerializer(users, many=False)
     return Response(serializer.data)
 
+  @swagger_auto_schema(responses={200: UserSerializer})
+  def patch(self, request: Request, id: str) -> Response:
+    pass
+
+
   @swagger_auto_schema(
     manual_parameters=[
       openapi.Parameter(
@@ -77,7 +82,7 @@ class UserSingleView(APIView):
           {"detail": "User not found"},
           status=status.HTTP_404_NOT_FOUND
         )
-      UserService.deactivate_user(user)
+      UserService.deactivate_user(user.id)
       return Response(status=status.HTTP_204_NO_CONTENT)
   
     
