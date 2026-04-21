@@ -1,6 +1,7 @@
 from django.db import models
 from .user import CustomUser
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Student(models.Model):
   """
@@ -27,7 +28,9 @@ class Student(models.Model):
     primary_key=True,
   )
   enrollment_date = models.DateField(auto_now_add=True)
-  grade = models.IntegerField(null=True, blank=False)
+  grade = models.IntegerField(null=False, blank=False, 
+                              validators= [MaxValueValidator(10), MinValueValidator(0)],
+                              default=0)
   
   class Meta:
     app_label="users"

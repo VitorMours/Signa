@@ -15,13 +15,23 @@ class StudentService:
     except Student.DoesNotExist:
       return None
     except Exception as e:
-      raise Exception(f"Error retrieving student: {e}")
+      raise Exception(f"Error retrieving student by uuid: {e}")
   
+
+  @staticmethod 
+  def get_student_by_email(email: str) -> Student | None:
+    try:
+        return Student.objects.get(email=email)
+    except Student.DoesNotExist:
+        return None 
+    except Exception as e:
+        raise Exception(f"Error retrieving student by email: {e}")
+
   @staticmethod 
   @transaction.atomic
   def create_student(validated_data: dict) -> Student:
     try:
-      if default_user := UserService.create_user(validated_data):
+      if default_user := UserService._check_user_by_credentials(email=validated_data["user"]):
         student = Student.objects.create(user = default_user)
         return student
     except Exception as e:
@@ -54,11 +64,8 @@ class StudentService:
       raise Exception(f"There was a problem with the student deactivation: {e}")
   
   @staticmethod 
-  def _check_student_by_credentials(student: Student) -> bool:
-    try:
-      if result := UserService._check_user_by_credentials(email=student.user.email):
-        return True
-      return False
-    except Exception as e:
-      raise Exception("Was not possible to search for the user by credentials: " + str(e))
-  
+  def check_if_student_exists_by_email(email: str) -> bool:
+    pass
+        
+
+

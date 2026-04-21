@@ -171,7 +171,7 @@ class TestUserSingleView(TestCase):
   def test_if_user_single_view_patch_method_works(self) -> None:
     module = importlib.import_module("users.views.user")
     view = module.UserSingleView.as_view()
-    request = self.factory.get(
+    request = self.factory.patch(
       f'/users/{self.user.id}/',
       data={'first_name': 'NovoNome'},   # PATCH precisa de dados
       content_type='application/json',
@@ -181,23 +181,16 @@ class TestUserSingleView(TestCase):
     self.assertEqual(response.status_code, status.HTTP_200_OK)
   
   def test_if_user_single_view_patch_method_use_jwt_authentication(self) -> None:
-    pass
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    module = importlib.import_module("users.views.user")
+    view = module.UserSingleView.as_view()
+    request = self.factory.patch(
+      f'/users/{self.user.id}/',
+      data={'first_name': 'NovoNome'},   # PATCH precisa de dados
+      content_type='application/json',
+    )
+    response = view(request, id=self.user.id)  # pk provavelmente necessário
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
   def test_if_class_have_delete_method(self) -> None:
     module = importlib.import_module("users.views.user")
     class_ = module.UserSingleView

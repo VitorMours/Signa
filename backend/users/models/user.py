@@ -60,6 +60,11 @@ class CustomUser(AbstractUser):
   
   objects = CustomUserManager()
   
+  def __repr__(self) -> None:
+    return str(self.email)
+  
+  def __str__(self) -> None:
+    return str(self.email)
   
   class Meta:
     db_table="users"

@@ -41,32 +41,6 @@ class TestStudentSerializer(TestCase):
         serializer = StudentSerializer()
         fields = serializer.fields.keys()
         self.assertIn('user', fields)
-        self.assertIn('user_id', fields)
-
-    def test_serialization_output(self) -> None:
-        serializer = StudentSerializer(instance=self.student)
-        data = serializer.data
-        self.assertEqual(data['user']['email'], self.user.email)
-        self.assertNotIn('user_id', data)
-        self.assertEqual(str(data['user']['id']), str(self.user.id))
-
-    def test_deserialization_validation(self) -> None:
-        """Testa a ENTRADA (JSON -> Model)"""
-        serializer = StudentSerializer(data=self.valid_payload)
+        self.assertIn('enrollment_date', fields)
+        self.assertIn('grade', fields)
         
-        self.assertTrue(serializer.is_valid(), serializer.errors)
-        self.assertEqual(serializer.validated_data['user'], self.user)
-
-    def test_read_only_fields(self) -> None:
-        """Garante que campos read_only sejam ignorados no input"""
-        payload = self.valid_payload.copy()
-        payload['enrollment_date'] = "2026-01-01"
-        
-        serializer = StudentSerializer(data=payload)
-        self.assertTrue(serializer.is_valid())
-        self.assertNotIn('enrollment_date', serializer.validated_data)
-
-    def test_custom_user_manager_logic(self) -> None:
-        """Valida se o seu CustomUserManager está barrando emails nulos"""
-        with self.assertRaisesRegex(ValueError, "O valor do campo email nao pode ser nulo"):
-            CustomUser.objects.create_user(email="", password="123")

@@ -9,12 +9,11 @@ class StudentSerializer(serializers.ModelSerializer):
     """
     Student Serializer using the model serializer
     """
-    user = UserSerializer(read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.all(),
-        source='user',
-        write_only=True
-    )
+    # user_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=CustomUser.objects.all(),
+    #     source='user',
+    #     write_only=True
+    # )
     class Meta:
         model = Student  
         fields = "__all__"
