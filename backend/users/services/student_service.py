@@ -11,7 +11,7 @@ class StudentService:
   @staticmethod 
   def get_student_by_id(student_id: str) -> Student | None:
     try:
-      return Student.objects.get(id=student_id)
+      return Student.objects.get(user=student_id)
     except Student.DoesNotExist:
       return None
     except Exception as e:
@@ -47,6 +47,8 @@ class StudentService:
         elif hasattr(instance.user, attr):
           setattr(instance.user, attr, value)
       instance.save()
+      return instance 
+
     except Exception as e:
       raise Exception(f"There was a problem with the student update: {e}")
   

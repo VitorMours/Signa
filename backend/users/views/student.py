@@ -61,7 +61,7 @@ class StudentSingleView(APIView):
       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     updated = StudentService.update_student(student, serializer.validated_data)
-    return Response(StudentSerializer(updated).data)
+    return Response(StudentSerializer(updated).data, status=status.HTTP_201_CREATED)
   
   def delete(self, request: Request, id: str) -> Response:
     deactivated = StudentService.deactivate_student(id)
