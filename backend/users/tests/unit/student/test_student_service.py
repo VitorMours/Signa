@@ -2,7 +2,7 @@ from django.test import TestCase
 import importlib 
 import inspect 
 from users.services.user_service import UserService 
-from users.models.student import Student 
+from users.models.student import Student
 
 class TestStudentService(TestCase):
   def setUp(self) -> None:
@@ -69,27 +69,32 @@ class TestStudentService(TestCase):
       signature = inspect.signature(class_.create_student)
       params = list(signature.parameters.keys())
       self.assertEqual(params[0], "validated_data")
-      created_student = class_.create_student(self.mock_student)
+      created_student = class_.create_student({"user":self.created_mock_user, "grade":0})
       self.assertTrue(isinstance(created_student, Student))
 
   def test_if_update_student_method_works(self) -> None:
     module = importlib.import_module("users.services.student_service")
     class_ = module.StudentService
-    created_student = class_.create_student(self.mock_student)
+    signature = inspect.signature(class_.update_student)
+    params = list(signature.parameters.keys())
+    self.assertEqual(params[0], "instance")
+    self.assertEqual(params[1], "validated_data")
+    created_student = class_.create_student({"user":self.created_mock_user, "grade":0})
     self.assertTrue(isinstance(created_student, Student))
-    self.assertEqual(created_student.grade, 0)
-    class_.update_student(created_student, {"grade":8})
-    self.assertTrue(isinstance(created_student, Student))
-    self.assertEqual(created_student.grade, 8)
-
+    updated_student = class_.update_student(created_student, {"grade":2})
+    self.assertEqual(created_student.user, self.created_mock_user)
+    self.assertEqual(created_student.grade, 2)
+    
   def test_if_get_all_students_method_works(self) -> None:
+    """Testando busca total de estudantes"""
     module = importlib.import_module("users.services.student_service")
     class_ = module.StudentService 
-    students = class_.get_all_students()
-    self.assertEqual(len(students), 0)
-    class_.create_student(self.mock_student)
-    students = class_.get_all_students()
-    self.assertEqual(len(students), 1)
+    result = class_.get_all_students()
+    self.assertEqual(len(result), 0)
+    created_student = class_.create_student({"user":self.created_mock_user, "grade":0})
+    self.assertTrue(isinstance(created_student, Student))
+    new_result = class_.get_all_students()
+    self.assertEqual(len(new_result), 1)
     
     
 

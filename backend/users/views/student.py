@@ -43,6 +43,7 @@ class StudentSingleView(APIView):
   authentication_classes = [JWTAuthentication]
   permission_classes = [IsAuthenticated]
   
+  @swagger_auto_schema(responses = {200: StudentSerializer})
   def get(self, request: Request, id: str) -> Response:
     student = StudentService.get_student_by_id(id)
     if not student:
@@ -50,7 +51,8 @@ class StudentSingleView(APIView):
     
     serializer = StudentSerializer(student)
     return Response(serializer.data)
-  
+
+  @swagger_auto_schema(responses = {201: StudentSerializer})
   def patch(self, request: Request, id: str) -> Response:
     student = StudentService.get_student_by_id(id)
     if not student:
@@ -61,8 +63,9 @@ class StudentSingleView(APIView):
       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     updated = StudentService.update_student(student, serializer.validated_data)
-    return Response(StudentSerializer(updated).data)
+    return Response(StudentSerializer(updated).data, status=status.HTTP_201_CREATED)
   
+  @swagger_auto_schema(responses = {204: StudentSerializer})
   def delete(self, request: Request, id: str) -> Response:
     deactivated = StudentService.deactivate_student(id)
     if not deactivated:
