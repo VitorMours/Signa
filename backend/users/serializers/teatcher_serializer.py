@@ -8,14 +8,14 @@ class TeatcherSerializer(serializers.Serializer):
   first_name = serializers.CharField(max_length=50) 
   last_name = serializers.CharField(max_length=50)
   email = serializers.EmailField()
-  password = serializers.CharField(write_only=True)
+  password = serializers.CharField(write_only=True, min_length=8)
   created_at = serializers.DateTimeField(read_only=True)
   updated_at = serializers.DateTimeField(read_only=True)
 
-  def create(self, validated_data) -> None:
+  def create(self, validated_data) -> Teatcher:
     return Teatcher.objects.create(**validated_data)
 
-  def update(self, instance,validated_data) -> None:
+  def update(self, instance, validated_data) -> Teatcher:
     instance.email = validated_data.get("email", instance.email)
     instance.first_name = validated_data.get("first_name", instance.first_name)
     instance.last_name = validated_data.get("last_name", instance.last_name)
