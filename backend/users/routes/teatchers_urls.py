@@ -1,9 +1,8 @@
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from users.views.teatcher import TeatcherView
 
 app_name = "users"
 
-router = DefaultRouter()
-router.register('', TeatcherView, basename='teatchers')
-
-urlpatterns = router.urls
+urlpatterns = [
+  path('', TeatcherView.as_view()),
+]   
