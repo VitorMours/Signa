@@ -1,17 +1,17 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from users.models.teatcher import Teatcher
 from users.serializers.teatcher_serializer import TeatcherSerializer
-
-
-class TeatcherViewSet(ModelViewSet):
-  """
-  Viewset for the teatcher data in the database, 
-  some fields area write_only or read_only.
-    read_only: created_at, updated_at
-    write_only: password
-  """
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+class TeatcherView(APIView):
   
-  serializer_class = TeatcherSerializer
-  authentication_classes = []
-  queryset = Teatcher.objects.all()
+  authentication_classes = [JWTAuthentication]
+  permission_classes = [IsAuthenticated]
   
+  def get(self, request: Request) -> Response:
+    pass 
+  
+  def post(self, request: Request) -> Response:
+    pass 
