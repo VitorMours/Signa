@@ -1,33 +1,40 @@
 from rest_framework import serializers
-from users.models.teatcher import Teatcher 
+from users.models.teatcher import Teatcher
+from users.models.user import CustomUser
+
 
 class TeatcherSerializer(serializers.Serializer):
-  """
-  User serializer with some security, following the user standard
-  """
-  first_name = serializers.CharField(max_length=50) 
-  last_name = serializers.CharField(max_length=50)
-  email = serializers.EmailField()
-  password = serializers.CharField(write_only=True, min_length=8)
-  created_at = serializers.DateTimeField(read_only=True)
-  updated_at = serializers.DateTimeField(read_only=True)
+    user = serializers.UUIDField(write_only=True)
+    bio = serializers.CharField(required=False, allow_blank=True)
+    specialization = serializers.CharField(required=False, allow_blank=True)
 
-  def create(self, validated_data) -> Teatcher:
-    return Teatcher.objects.create(**validated_data)
+    # saída estruturada
+    def to_representation(self, instance):
+        return {
+            "user": {
+                "id": str(instance.user.id),
+                "first_name": instance.user.first_name,
+                "last_name": instance.user.last_name,
+                "email": instance.user.email,
+            },
+            "bio": instance.bio,
+            "specialization": instance.specialization,
+        }
 
-  def update(self, instance, validated_data) -> Teatcher:
-    instance.email = validated_data.get("email", instance.email)
-    instance.first_name = validated_data.get("first_name", instance.first_name)
-    instance.last_name = validated_data.get("last_name", instance.last_name)
-    
-    if "password" in validated_data:
-      instance.set_password(validated_data)
-    
-    instance.save()
-    
-  def delete(self, instance) -> bool:
-    instance.is_active = False 
-    instance.save()
-    return True 
-  
-    
+    def create(self, validated_data):
+        user_id = validated_data.pop("user")
+
+        user = CustomUser.objects.filter(id=user_id).first()
+        if not user:
+            raise serializers.ValidationError({"user": "Usuário não encontrado"})
+
+        if hasattr(user, "teacher_profile"):
+            raise serializers.ValidationError({"user": "Usuário já possui perfil de professor"})
+
+        return Teatcher.objects.create(user=user, **validated_data)
+
+    def update(self, instance, validated_data):
+        instance.bio = validated_data.get("bio", instance.bio)
+        instance.specialization = validated_data.get("specialization", instance.specialization)
+        instance.save()
+        return instance

@@ -27,16 +27,15 @@ class TeatcherService:
     Cria um perfil de professor associado a um usuário existente.
     """
     try:
-      user_identifier = validated_data.pop("user")
-      
-      if isinstance(user_identifier, str):
-        default_user = UserService._check_user_by_credentials(email=user_identifier)
-      else:
-        default_user = user_identifier
-      teatcher = Teatcher.objects.create(user=default_user, **validated_data)
-      return teatcher
+      if default_user := UserService._check_user_by_credentials(uuid=validated_data["user"]):
+        teatcher = Teatcher.objects.create(
+          user = default_user, 
+          bio=validated_data["bio"], 
+          specialization=validated_data["specialization"] 
+        )
+        return teatcher
     except Exception as e:
-      raise Exception(f"Was not possible to create the teatcher: {e}")
+      raise Exception(f"There was a problem with the student creation: {e}")
   
   @staticmethod 
   @transaction.atomic

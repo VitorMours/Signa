@@ -5,9 +5,10 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from users.services.user_service import UserService 
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
+from users.models.teatcher import Teatcher
 
 class TestTeatcherView(TestCase):
   def setUp(self) -> None:
@@ -74,12 +75,137 @@ class TestTeatcherView(TestCase):
     )
     response = view(request)
     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertIsInstance(response.data, list)
     
-  #def test_if_teatcher_view_post_method_works_correctly(self) -> None:
-  #  module = importlib.import_module("users.views.teatcher")
-  #  view = module.TeatcherView.as_view()
-  #  request = self.factory.get(
-  #    '/teatchers/',
-  #    data = {}
-  #  
-  #  )
+  def test_if_teatcher_view_get_method_requires_bearer_token(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    view = module.TeatcherView.as_view()
+    request = self.factory.get(
+      '/teatchers/'
+    )  
+    response = view(request)
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+  
+  def test_if_teatcher_view_post_method_works_correctly(self):
+    module = importlib.import_module("users.views.teatcher")
+    view = module.TeatcherView.as_view()
+
+    data = {
+      "user": str(self.user.id),
+      "bio": "Professor",
+      "specialization": "Matemática"
+    }
+
+    request = self.factory.post(
+      '/teatchers/',
+      data=data,
+      format='json'
+    )
+    response = view(request)
+    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    
+    
+class TestTeacherSingleView(TestCase):
+  def setUp(self) -> None:
+    self.factory = APIRequestFactory()
+    self.user = UserService.create_user(
+      {
+        "first_name":"testuser",
+        "last_name":"token",
+        "email":"email@email.com",
+        "password":"123456"
+      }
+    )
+    refresh = RefreshToken.for_user(self.user)
+    self.access_token = str(refresh.access_token)
+  
+  def test_if_is_running(self) -> None:
+    self.assertTrue(True)
+  
+  def test_if_can_import_single_teatcher_view(self) -> None:
+    try:
+      from users.views.teatcher import TeatcherSingleView
+      self.assertIsNotNone(TeatcherSingleView)    
+    except ImportError:
+      raise ImportError("Was not possible to import the single teatcher view")
+
+  def test_if_single_teatcher_view_have_correct_configurations(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    class_ = module.TeatcherSingleView
+    self.assertTrue(inspect.isclass(class_))
+    self.assertTrue(issubclass(class_, APIView))
+    self.assertEqual(class_.authentication_classes, [JWTAuthentication])
+    self.assertEqual(class_.permission_classes, [IsAuthenticated])
+    
+  def test_if_teatcher_single_view_have_get_method(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    class_ = module.TeatcherSingleView
+    self.assertTrue(hasattr(class_, "get"))
+    
+  def test_if_teatcher_single_view_get_have_correct_signature(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    class_ = module.TeatcherSingleView
+    signature = inspect.signature(class_.get)
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0], "self")
+    self.assertEqual(parameters[1], "request")
+    self.assertEqual(parameters[2], "uuid")
+    
+  def test_if_teatcher_single_view_have_patch_method(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    class_ = module.TeatcherSingleView
+    self.assertTrue(hasattr(class_, "patch"))
+    
+  def test_if_teatcher_single_view_patch_have_correct_signature(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    class_ = module.TeatcherSingleView 
+    signature = inspect.signature(class_.patch)
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0], "self")
+    self.assertEqual(parameters[1], "request")
+    self.assertEqual(parameters[2], "uuid")
+    
+  def test_if_teatcher_single_view_have_delete_method(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    class_ = module.TeatcherSingleView
+    self.assertTrue(hasattr(class_, "delete"))
+    
+  def test_if_teatcher_single_view_delete_have_correct_signature(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    class_ = module.TeatcherSingleView 
+    signature = inspect.signature(class_.delete)
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0], "self")
+    self.assertEqual(parameters[1], "request")
+    self.assertEqual(parameters[2], "uuid")
+    
+  def test_if_teatcher_single_view_get_method_works(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    view = module.TeatcherSingleView.as_view()
+    request = self.factory.get(
+      f"/teatchers/{str(self.user.id)}",
+      HTTP_AUTHORIZATION=f"Bearer {self.access_token}"
+    )
+    response = view(request, uuid=str(self.user.id))
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+  def test_if_teatcher_single_view_get_method_require_authentication(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    view = module.TeatcherSingleView.as_view()
+    request = self.factory.get(
+      f"/teatchers/{str(self.user.id)}",
+    )
+    response = view(request, uuid=str(self.user.id))
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    
+  def test_if_teatcher_single_view_patch_method_works_correctly(self) -> None:
+    pass 
+  
+  def test_if_teatcher_single_view_patch_method_require_authentication(self) -> None:
+    pass
+
+  def test_if_teatcher_single_view_delete_method_works_correctly(self) -> None:
+    pass 
+  
+  def test_if_teatcher_single_view_delete_method_require_authentication(self) -> None:
+    pass
