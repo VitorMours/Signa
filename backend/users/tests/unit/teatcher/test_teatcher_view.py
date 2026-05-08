@@ -75,11 +75,4 @@ class TestTeatcherView(TestCase):
     response = view(request)
     self.assertEqual(response.status_code, status.HTTP_200_OK)
     
-  #def test_if_teatcher_view_post_method_works_correctly(self) -> None:
-  #  module = importlib.import_module("users.views.teatcher")
-  #  view = module.TeatcherView.as_view()
-  #  request = self.factory.get(
-  #    '/teatchers/',
-  #    data = {}
-  #  
-  #  )
+  
