@@ -58,7 +58,7 @@ class TestTeatcherService(TestCase):
     parameters = list(signature.parameters.keys())
     self.assertTrue(parameters[0], "validated_data")
     created_teatcher = class_.create_teatcher({
-      "user":self.created_mock_user,
+      "user":self.created_mock_user.id,
       "bio":"I'm a math professor",
       "specialization":"Linear Algebra"
     })
@@ -72,7 +72,7 @@ class TestTeatcherService(TestCase):
     self.assertTrue(parameters[0], "instance")
     self.assertTrue(parameters[1], "validated_data")
     created_teatcher = class_.create_teatcher({
-      "user":self.created_mock_user,
+      "user":self.created_mock_user.id,
       "bio":"I'm a math professor",
       "specialization":"Linear Algebra"
     })

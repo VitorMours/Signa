@@ -1,84 +1,102 @@
-from django.test import TestCase 
-import importlib 
-import inspect 
-from rest_framework.serializers import Serializer
+from django.test import TestCase
+from users.models.user import CustomUser
+from users.models.teatcher import Teatcher
+from users.serializers.teatcher_serializer import TeatcherSerializer
 
-class TestTeatcherSerializer(TestCase):
-  def setUp(self) -> None:
-    pass 
-  
-  def test_if_is_running(self) -> None:
-    self.assertTrue(True)
-    
-  def test_if_can_import_the_module(self) -> None:
-    try:
-      from users.serializers import teatcher_serializer
-      self.assertIsNotNone(teatcher_serializer)
-    except ImportError:
-      raise ImportError("Was not possible to import the teatcher serializer")
-  
-  def test_if_can_import_the_teatcher_class_serializer(self) -> None:
-    try:
-      module = importlib.import_module("users.serializers.teatcher_serializer")
-      class_ = module.TeatcherSerializer 
-      self.assertIsNotNone(class_)
-      self.assertTrue(issubclass(class_, Serializer))
-      self.assertTrue(inspect.isclass(class_))
-    except ImportError:
-      raise ImportError("Was not possible to check the teathcer serializer")
-    
-  def test_if_teatcher_serializer_class_have_correct_fields_and_types(self) -> None:
-    module = importlib.import_module("users.serializers.teatcher_serializer")
-    class_ = module.TeatcherSerializer().fields
-    self.assertTrue(class_["first_name"])
-    self.assertTrue(class_["last_name"])
-    self.assertTrue(class_["email"])
-    self.assertTrue(class_["password"])
-    self.assertTrue(class_["created_at"])
-    self.assertTrue(class_["updated_at"])
-    
-  def test_if_teatcher_serializer_fileds_have_correct_constraints(self) -> None:
-    module = importlib.import_module("users.serializers.teatcher_serializer")
-    class_ = module.TeatcherSerializer().fields
-    self.assertTrue(class_["first_name"].required)
-    self.assertFalse(class_["first_name"].allow_null)
-    self.assertEqual(class_["first_name"].max_length, 50)
-    self.assertTrue(class_["last_name"].required)
-    self.assertFalse(class_["last_name"].allow_null)
-    self.assertEqual(class_["last_name"].max_length, 50)
-    self.assertTrue(class_["email"].required)
-    self.assertFalse(class_["email"].allow_null)
-    self.assertTrue(class_["password"].required)
-    self.assertTrue(class_["password"].write_only)
-    self.assertEqual(class_["password"].min_length, 8)
-    self.assertTrue(class_["created_at"].read_only)
-    self.assertTrue(class_["updated_at"].read_only)
+class TeatcherSerializerTest(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(
+            email="test@example.com",
+            password="12345678",
+            first_name="John",
+            last_name="Doe",
+        )
 
-  def test_if_teatcher_serializer_have_create_method(self) -> None:
-    module = importlib.import_module("users.serializers.teatcher_serializer")
-    class_ = module.TeatcherSerializer
-    self.assertTrue(hasattr(class_, "create"))
-    signature = inspect.signature(class_.create)
-    params = list(signature.parameters.keys())
-    self.assertTrue(params[0], "self")
-    self.assertTrue(params[0], "validated_data")
+    # ✅ CREATE
 
-  def test_if_teatcher_serializer_have_update_method(self) -> None:
-    module = importlib.import_module("users.serializers.teatcher_serializer")
-    class_ = module.TeatcherSerializer 
-    self.assertTrue(hasattr(class_, "update"))
-    signature = inspect.signature(class_.update)
-    params = list(signature.parameters.keys())
-    self.assertTrue(params[0], "self")
-    self.assertTrue(params[1], "instance")
-    self.assertTrue(params[2], "validated_data")
-    
-  def test_if_teatcher_serializer_have_delete_method(self) -> None:
-    module = importlib.import_module("users.serializers.teatcher_serializer")
-    class_ = module.TeatcherSerializer 
-    self.assertTrue(hasattr(class_, "delete"))
-    signature = inspect.signature(class_.delete)
-    params = list(signature.parameters.keys())
-    self.assertTrue(params[0], "self")
-    self.assertTrue(params[1], "instance")
-    
+    def test_create_teacher_success(self):
+        data = {
+            "user": self.user.id,
+            "bio": "Professor de matemática",
+            "specialization": "Matemática",
+        }
+
+        serializer = TeatcherSerializer(data=data)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+
+        teacher = serializer.save()
+
+        self.assertEqual(teacher.user, self.user)
+        self.assertEqual(teacher.bio, data["bio"])
+        self.assertEqual(teacher.specialization, data["specialization"])
+
+    def test_create_teacher_user_not_found(self):
+        data = {
+            "user": "11111111-1111-1111-1111-111111111111",
+            "bio": "Teste",
+        }
+
+        serializer = TeatcherSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+
+        with self.assertRaises(Exception):
+            serializer.save()
+
+    def test_create_teacher_already_exists(self):
+        Teatcher.objects.create(user=self.user)
+
+        data = {
+            "user": self.user.id,
+            "bio": "Outro perfil",
+        }
+
+        serializer = TeatcherSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+
+        with self.assertRaises(Exception):
+            serializer.save()
+
+    # ✅ UPDATE
+
+    def test_update_teacher_success(self):
+        teacher = Teatcher.objects.create(
+            user=self.user,
+            bio="Antigo",
+            specialization="Física",
+        )
+
+        data = {
+            "bio": "Novo bio",
+            "specialization": "Matemática",
+        }
+
+        serializer = TeatcherSerializer(instance=teacher, data=data, partial=True)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+
+        updated = serializer.save()
+
+        self.assertEqual(updated.bio, "Novo bio")
+        self.assertEqual(updated.specialization, "Matemática")
+
+    # ✅ REPRESENTATION
+
+    def test_to_representation(self):
+        teacher = Teatcher.objects.create(
+            user=self.user,
+            bio="Bio teste",
+            specialization="Química",
+        )
+
+        serializer = TeatcherSerializer(instance=teacher)
+        data = serializer.data
+
+        self.assertEqual(data["user"]["email"], self.user.email)
+        self.assertEqual(data["bio"], "Bio teste")
+        self.assertEqual(data["specialization"], "Química")
+
+    # ✅ VALIDATION
+
+    def test_user_required(self):
+        serializer = TeatcherSerializer(data={})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("user", serializer.errors)
