@@ -4,6 +4,7 @@ import inspect
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from users.services.teatcher_service import TeatcherService
 from users.services.user_service import UserService 
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -253,7 +254,37 @@ class TestTeacherSingleView(TestCase):
     )
     response = view(request, uuid=str(self.user.id))
     self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+  
+  def test_if_teatcher_single_view_patch_method_works(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    view = module.TeatcherSingleView.as_view()
+    data = {"bio": "Updated bio"}
+    request = self.factory.patch(
+      f"/teatchers/{str(self.user.id)}",
+      data=data,
+      format='json',
+      HTTP_AUTHORIZATION=f"Bearer {self.access_token}"
+    )
+    response = view(request, uuid=str(self.user.id))
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertEqual(response.data['bio'], "Updated bio")
     
+<<<<<<< HEAD
+=======
+  def test_if_teatcher_single_view_delete_method_works(self) -> None:
+    module = importlib.import_module("users.views.teatcher")
+    view = module.TeatcherSingleView.as_view()
+    request = self.factory.delete(
+      f"/teatchers/{str(self.user.id)}",
+      HTTP_AUTHORIZATION=f"Bearer {self.access_token}"
+    )
+    response = view(request, uuid=str(self.user.id))
+    self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    # Check if deactivated
+    self.user.refresh_from_db()
+    self.assertFalse(self.user.is_active)
+    
+>>>>>>> 41847debe2b1d84c76e725aaea498ec0a602bf2b
   def test_if_teatcher_single_view_patch_method_works(self) -> None:
     module = importlib.import_module("users.views.teatcher")
     view = module.TeatcherSingleView.as_view()
