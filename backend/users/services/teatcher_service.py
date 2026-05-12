@@ -17,8 +17,18 @@ class TeatcherService:
     """
     try:
         return Teatcher.objects.get(user_id=teatcher_id)
-    except Teatcher.DoesNotExist:
+    except (Teatcher.DoesNotExist, ValueError):
         return None
+      
+  @staticmethod 
+  def get_teatcher_by_email(teatcher_email: str) -> Optional[Teatcher]:
+    """
+    Busca um professor pelo email
+    """
+    try:
+      return Teatcher.objects.get(email=teatcher_email)
+    except Exception:
+      return None    
       
   @staticmethod
   @transaction.atomic 
