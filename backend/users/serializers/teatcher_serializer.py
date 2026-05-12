@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from users.models.teatcher import Teatcher
 from users.models.user import CustomUser
+from django.db import IntegrityError
 
 
 class TeatcherSerializer(serializers.Serializer):
     user = serializers.UUIDField(write_only=True)
     bio = serializers.CharField(required=False, allow_blank=True)
-    specialization = serializers.CharField(required=False, allow_blank=True)
+    specialization = serializers.CharField(required=False, allow_blank=True, max_length=100)
 
     # saída estruturada
     def to_representation(self, instance):
@@ -28,10 +29,10 @@ class TeatcherSerializer(serializers.Serializer):
         if not user:
             raise serializers.ValidationError({"user": "Usuário não encontrado"})
 
-        if hasattr(user, "teacher_profile"):
+        try:
+            return Teatcher.objects.create(user=user, **validated_data)
+        except IntegrityError:
             raise serializers.ValidationError({"user": "Usuário já possui perfil de professor"})
-
-        return Teatcher.objects.create(user=user, **validated_data)
 
     def update(self, instance, validated_data):
         instance.bio = validated_data.get("bio", instance.bio)
