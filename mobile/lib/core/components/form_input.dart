@@ -20,10 +20,14 @@ class _FormInputState extends State<FormInput> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 8),
+          child: Text(widget.labelText, style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left),
+        ),
         TextFormField(
           decoration: InputDecoration(
-            labelText: widget.labelText,
             hintText: widget.hintText,
           ),
           validator: widget.validator,

@@ -34,6 +34,29 @@ class AppColors {
   static const whiteText = Colors.white;
 }
 
+class AppTextStyle {
+  static final logoTextStyle = TextStyle(
+    fontSize: 48,
+    fontWeight: FontWeight.w900,
+    fontFamily: GoogleFonts.lexend().fontFamily,
+
+    foreground: Paint()
+      ..shader = const LinearGradient(
+        colors: [
+          Color(0xFF00C2FF),
+          Color(0xFF5B21FF),
+        ],
+      ).createShader(
+        const Rect.fromLTWH(
+          0,
+          0,
+          300,
+          70,
+        ),
+      ),
+  );
+}
+
 class ElevatedButtonTheme {
   static final elevatedButton = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -52,24 +75,25 @@ class AppInputTheme {
     filled: true,
     fillColor: const Color(0xFFFFFFFF),
     hoverColor: const Color(0xFFFFFFFF),
-    hintStyle: TextStyle(color: AppColors.hintText),
+    isDense: true,
+    hintStyle: TextStyle(color: AppColors.hintText, fontSize: 14),
     prefixStyle: TextStyle(color: AppColors.hintText),
 
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Color(0xFF9F9F9F), width: 2),
+      borderRadius: BorderRadius.circular(25),
+      borderSide: const BorderSide(color: AppColors.hintText, width: 1),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(25),
       borderSide: const BorderSide(
-        color: Color.fromARGB(255, 43, 43, 43),
-        width: 2,
+        color: AppColors.hintText,
+        width: 1,
       ),
     ),
 
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.tertiary, width: 2),
+      borderRadius: BorderRadius.circular(25),
+      borderSide: const BorderSide(color: AppColors.tertiary, width: 1),
     ),
   );
 }
