@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/login/domain/entities/auth_user_entity.dart';
 import 'package:mobile/features/auth/login/domain/entities/login_entity.dart';
 import 'package:mobile/features/auth/login/domain/interfaces/login_repository.dart';
-import 'package:mobile/features/auth/login/domain/usecases/login_use_case.dart';
+import 'package:mobile/features/auth/login/domain/usecases/login_with_email_use_case.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockAuthRepository extends Mock implements LoginRepository {}

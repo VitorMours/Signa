@@ -2,11 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import v1_router
 from app.core.config import config
-api = FastAPI(title = config.title, description = "An api for the sonji project")
+from app.core.logging import setup_logger
 
+app = FastAPI(title = config.title, description = "An api for the sonji project")
+
+logger = setup_logger(__name__)
 
 origins = ["*"]
-api.add_middleware(
+app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,  
@@ -14,5 +17,7 @@ api.add_middleware(
     allow_headers=["*"],     
 )
 
-api.add_api_route("/health", lambda: {"status": "ok"}, methods=["GET"])
-api.include_router(v1_router)
+app.add_api_route("/health", lambda: {"status": "ok"}, methods=["GET"])
+app.include_router(v1_router)
+
+logger.info("API initialized successfully")

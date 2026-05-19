@@ -3,4 +3,6 @@ class LoginEntity {
   final String password;
 
   LoginEntity({required this.email, required this.password});
+
+  List<Object?> get props => [email, password];
 }
