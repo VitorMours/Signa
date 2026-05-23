@@ -269,8 +269,6 @@ class TestTeacherSingleView(TestCase):
     self.assertEqual(response.status_code, status.HTTP_200_OK)
     self.assertEqual(response.data['bio'], "Updated bio")
     
-<<<<<<< HEAD
-=======
   def test_if_teatcher_single_view_delete_method_works(self) -> None:
     module = importlib.import_module("users.views.teatcher")
     view = module.TeatcherSingleView.as_view()
@@ -284,7 +282,6 @@ class TestTeacherSingleView(TestCase):
     self.user.refresh_from_db()
     self.assertFalse(self.user.is_active)
     
->>>>>>> 41847debe2b1d84c76e725aaea498ec0a602bf2b
   def test_if_teatcher_single_view_patch_method_works(self) -> None:
     module = importlib.import_module("users.views.teatcher")
     view = module.TeatcherSingleView.as_view()
