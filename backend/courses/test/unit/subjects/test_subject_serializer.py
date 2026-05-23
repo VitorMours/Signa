@@ -2,11 +2,21 @@ from django.test import TestCase
 import importlib 
 import inspect 
 from rest_framework import serializers
-
+from courses.models.subject import Subject
 
 class TestSubjectSerializer(TestCase):
   def setUp(self) -> None:
-    pass 
+    self.subject = Subject.objects.create(
+      name="Mathematics",
+      knowledge_area="Science",
+      status=True
+    )
+    self.subject_dict = {
+      "name":"Portuguese",
+      "knowledge_area":"Linguistcs",
+      "status":False
+    }
+    self.subject.save()
   
   def test_if_can_run(self) -> None:
     self.assertTrue(True)
@@ -37,4 +47,10 @@ class TestSubjectSerializer(TestCase):
     self.assertIsInstance(class_.fields["knowledge_area"], serializers.CharField)
     self.assertIsInstance(class_.fields["status"], serializers.BooleanField)
     
-    
+  def test_if_can_subject_serializer_can_validate(self) -> None:
+    module = importlib.import_module("courses.serializers.subject_serializer")
+    class_ = module.SubjectSerializer
+    serializer = class_(data=self.subject_dict)
+    self.assertTrue(serializer.is_valid())   
+
+
