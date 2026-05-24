@@ -167,7 +167,7 @@ class TestUserSingleView(TestCase):
     self.assertEqual(parameters[0], "self")
     self.assertEqual(parameters[1], "request")
     self.assertEqual(parameters[2], "id")
-  
+
   def test_if_user_single_view_patch_method_works(self) -> None:
     module = importlib.import_module("users.views.user")
     view = module.UserSingleView.as_view()
