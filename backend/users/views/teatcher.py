@@ -79,8 +79,4 @@ class TeatcherSingleView(APIView):
     success = TeatcherService.deactivate_teatcher(uuid)
     if not success:
       return Response({"error": "Teacher not found"}, status=status.HTTP_404_NOT_FOUND)
-<<<<<<< HEAD
     return Response(status=status.HTTP_204_NO_CONTENT)
-=======
-    return Response(status=status.HTTP_204_NO_CONTENT)
->>>>>>> 41847debe2b1d84c76e725aaea498ec0a602bf2b
