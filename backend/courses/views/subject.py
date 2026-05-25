@@ -43,11 +43,9 @@ class SubjectSingleView(APIView):
   permissions_classes = [IsAuthenticated]
   authentication_classes = [JWTAuthentication]
 
-
   @swagger_auto_schema(responses = {200: SubjectSerializer})
   def get(self, request: Request, uuid: UUID) -> Response:
     pass
-
 
   @swagger_auto_schema(responses = {201: SubjectSerializer})
   def patch(self, request: Request, uuid: UUID) -> Response:

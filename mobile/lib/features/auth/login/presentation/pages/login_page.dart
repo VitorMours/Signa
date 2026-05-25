@@ -5,7 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/components/wave_clipper.dart';
 import 'package:mobile/features/auth/login/presentation/cubits/login_page_cubit.dart';
-
+import '../../../../../core/di/injection_container.dart';
 import '../../../../../utils/theme.dart';
 
 class LoginPage extends StatelessWidget {
@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginPageBloc(),
+      create: (_) => sl<LoginPageBloc>(),
       child: const _LoginView(),
     );
   }

@@ -1,12 +1,21 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mobile/core/components/app_logger.dart';
+import 'package:mobile/features/auth/login/domain/usecases/login_with_email_use_case.dart';
 
 part 'login_page_state.dart';
 part 'login_page_event.dart';
 
 class LoginPageBloc extends Bloc<LoginPageEvent, LoginState> {
-  LoginPageBloc() : super(const LoginState()) {
+  // 1. Declare o UseCase como uma dependência final
+  final LoginWithEmailUseCase _loginWithEmailUseCase;
+
+  // 2. Peça o UseCase no construtor do Bloc
+  LoginPageBloc({
+    required LoginWithEmailUseCase loginWithEmailUseCase,
+  })  : _loginWithEmailUseCase = loginWithEmailUseCase,
+  super(const LoginState()) {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
@@ -24,17 +33,23 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginState> {
   }
 
   void _onSubmitted(LoginSubmitted event, Emitter<LoginState> emit) async {
+    // Evita submissões duplicadas se já estiver carregando
+    if (state.status == LoginStatus.loading) return;
+
     emit(state.copyWith(status: LoginStatus.loading));
 
     try {
-      // Fazer login com authRepository
-
+      final user = await _loginWithEmailUseCase(
+        email: state.email,
+        password: state.password,
+      );
+      AppLogger.i('Executando login do usuario $user');
       emit(state.copyWith(status: LoginStatus.success));
     } catch (e) {
       emit(
         state.copyWith(
           status: LoginStatus.failure,
-          errorMessage: 'Email ou senha inválidos',
+          errorMessage: e.toString().replaceAll('Exception: ', ''), // Ajuste amigável para a mensagem
         ),
       );
     }
