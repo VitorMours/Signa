@@ -11,12 +11,15 @@ class LoginDataSource {
     try {
       AppLogger.i("Trying to make login");
       final response = await client.dio.post(
-        "/auth/login",
+        "/auth/login/",
         data: loginData.toJson(),
       );
+      AppLogger.i("Login response: ${response.data}");
       return LoginModel.fromJson(response.data);
-    } catch (e) {
-      throw Exception("Failed to login with email");
+    } catch (e, stack) {
+      AppLogger.e("Login error: $e\n$stack");
+      // Repropaga a exceção original para que o caller possa tratá-la
+      rethrow;
     }
   }
 }

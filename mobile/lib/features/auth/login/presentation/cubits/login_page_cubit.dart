@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
@@ -12,13 +13,37 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginState> {
   final LoginWithEmailUseCase _loginWithEmailUseCase;
 
   // 2. Peça o UseCase no construtor do Bloc
-  LoginPageBloc({
-    required LoginWithEmailUseCase loginWithEmailUseCase,
-  })  : _loginWithEmailUseCase = loginWithEmailUseCase,
-  super(const LoginState()) {
+  LoginPageBloc({required LoginWithEmailUseCase loginWithEmailUseCase})
+    : _loginWithEmailUseCase = loginWithEmailUseCase,
+      super(const LoginState()) {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
+  }
+
+  String _returnErrorMessage(DioException error) {
+    final statusCode = error.response?.statusCode;
+
+    // Mensagem customizada para 401 Unauthorized
+    switch (statusCode) {
+      case 401:
+        return 'Credenciais inválidas. Verifique seu email e senha.';
+      case 200:
+        final data = error.response?.data;
+        if (data is Map) {
+          final detail = data['detail'] ?? data['message'] ?? data['error'];
+          if (detail is String && detail.isNotEmpty) {
+            if (detail.toLowerCase().contains('invalid') ||
+                detail.toLowerCase().contains('credentials')) {
+              return 'Email ou senha inválidos';
+            }
+            return detail;
+          }
+        }
+      default:
+        return "Ocorreu um erro nao identificado no login";
+    }
+    return 'Erro ao fazer login';
   }
 
   void _onEmailChanged(LoginEmailChanged event, Emitter<LoginState> emit) {
@@ -33,7 +58,6 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginState> {
   }
 
   void _onSubmitted(LoginSubmitted event, Emitter<LoginState> emit) async {
-    // Evita submissões duplicadas se já estiver carregando
     if (state.status == LoginStatus.loading) return;
 
     emit(state.copyWith(status: LoginStatus.loading));
@@ -45,11 +69,11 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginState> {
       );
       AppLogger.i('Executando login do usuario $user');
       emit(state.copyWith(status: LoginStatus.success));
-    } catch (e) {
+    } on DioException catch (e, _) {
       emit(
         state.copyWith(
           status: LoginStatus.failure,
-          errorMessage: e.toString().replaceAll('Exception: ', ''), // Ajuste amigável para a mensagem
+          errorMessage: _returnErrorMessage(e),
         ),
       );
     }
