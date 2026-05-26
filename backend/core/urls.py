@@ -35,7 +35,8 @@ schema_view = get_schema_view(
 )
 
 api_urlpatterns = [
-    path('users/', include('users.routes.users_urls', namespace="users")),  
+    path('subject/', include('courses.routes.subject_urls', namespace="subjects")),
+    path('users/', include('users.routes.users_urls', namespace="users")),
     path('teatchers/', include('users.routes.teatchers_urls', namespace="teatchers")),  
     path('students/', include('users.routes.students_urls', namespace="students")),  
     path('auth/', include('authentication.urls', namespace="authentication")),  

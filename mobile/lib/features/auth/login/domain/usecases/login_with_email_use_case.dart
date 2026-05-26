@@ -1,9 +1,9 @@
+import 'package:mobile/features/auth/login/data/repositories/login_repository_impl.dart';
 import 'package:mobile/features/auth/login/domain/entities/login_entity.dart';
-import 'package:mobile/features/auth/login/domain/interfaces/login_repository_interface.dart';
 
 class LoginWithEmailUseCase {
-  final LoginRepositoryInterface _interface;
-  LoginWithEmailUseCase(this._interface);
+  final LoginRepositoryImpl repository;
+  LoginWithEmailUseCase(this.repository);
 
   Future<LoginEntity> call({
     required String email,
@@ -16,6 +16,6 @@ class LoginWithEmailUseCase {
     if (password.length < 6) {
       throw ArgumentError("Password need to be bigger than 6 characters");
     }
-    return await _interface.loginWithEmail(email: email, password: password);
+    return await repository.loginWithEmail(email: email, password: password);
   }
 }

@@ -1,0 +1,2 @@
+2026-05-26 09:02:37,788 | INFO | app.api.v1.gesture_detection | Gesture detection router initialized
+2026-05-26 09:02:37,801 | INFO | app.main | API initialized successfully

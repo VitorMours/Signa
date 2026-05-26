@@ -5,7 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/components/wave_clipper.dart';
 import 'package:mobile/features/auth/login/presentation/cubits/login_page_cubit.dart';
-
+import '../../../../../core/di/injection_container.dart';
 import '../../../../../utils/theme.dart';
 
 class LoginPage extends StatelessWidget {
@@ -14,14 +14,21 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginPageBloc(),
+      create: (_) => sl<LoginPageBloc>(),
       child: const _LoginView(),
     );
   }
 }
 
-class _LoginView extends StatelessWidget {
+class _LoginView extends StatefulWidget {
   const _LoginView();
+
+  @override
+  State<_LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<_LoginView> {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -74,99 +81,123 @@ class _LoginView extends StatelessWidget {
                       child: IntrinsicHeight(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const Gap(160),
-                              const Spacer(flex: 2),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const Gap(160),
+                                const Spacer(flex: 2),
 
-                              Center(
-                                child: Text(
-                                  "Signa",
-                                  style: AppTextStyle.logoTextStyle,
+                                Center(
+                                  child: Text(
+                                    "Signa",
+                                    style: AppTextStyle.logoTextStyle,
+                                  ),
                                 ),
-                              ),
 
-                              const Spacer(flex: 1),
+                                const Spacer(flex: 1),
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  BlocBuilder<LoginPageBloc, LoginState>(
-                                    buildWhen: (prev, curr) =>
-                                        prev.email != curr.email,
-                                    builder: (context, state) {
-                                      return FormInput(
-                                        labelText: 'Email',
-                                        hintText: 'Enter your email',
-                                        onChanged: (value) => context
-                                            .read<LoginPageBloc>()
-                                            .add(LoginEmailChanged(value)),
-                                        validator: (_) =>
-                                            null, // validação no BLoC via isValid
-                                      );
-                                    },
-                                  ),
-
-                                  const Gap(20),
-
-                                  // Campo de senha
-                                  BlocBuilder<LoginPageBloc, LoginState>(
-                                    buildWhen: (prev, curr) =>
-                                        prev.password != curr.password,
-                                    builder: (context, state) {
-                                      return FormInput(
-                                        labelText: 'Senha',
-                                        hintText: 'Coloque a sua senha',
-                                        obscureText: true,
-                                        onChanged: (value) => context
-                                            .read<LoginPageBloc>()
-                                            .add(LoginPasswordChanged(value)),
-                                        validator: (_) => null,
-                                      );
-                                    },
-                                  ),
-
-                                  const Gap(8),
-
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: TextButton(
-                                      onPressed: () => context.go('/signin'),
-                                      child: const Text("Não possui conta?"),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    BlocBuilder<LoginPageBloc, LoginState>(
+                                      buildWhen: (prev, curr) =>
+                                          prev.email != curr.email,
+                                      builder: (context, state) {
+                                        return FormInput(
+                                          labelText: 'Email',
+                                          hintText: 'Enter your email',
+                                          onChanged: (value) => context
+                                              .read<LoginPageBloc>()
+                                              .add(LoginEmailChanged(value)),
+                                          validator: (_) {
+                                            if (state.email.isEmpty) {
+                                              return 'Por favor, informe seu email';
+                                            }
+                                            if (!state.isEmailValid) {
+                                              return 'Email inválido';
+                                            }
+                                            return null;
+                                          },
+                                        );
+                                      },
                                     ),
-                                  ),
 
-                                  const Gap(32),
+                                    const Gap(20),
 
-                                  // Botão de login
-                                  BlocBuilder<LoginPageBloc, LoginState>(
-                                    buildWhen: (prev, curr) =>
-                                        prev.status != curr.status ||
-                                        prev.isValid != curr.isValid,
-                                    builder: (context, state) {
-                                      return Center(
-                                        child:
-                                            state.status == LoginStatus.loading
-                                            ? const CircularProgressIndicator()
-                                            : ElevatedButton(
-                                                onPressed: state.isValid
-                                                    ? () => context
-                                                          .read<LoginPageBloc>()
-                                                          .add(
-                                                            const LoginSubmitted(),
-                                                          )
-                                                    : null,
-                                                child: const Text("Login"),
-                                              ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
+                                    // Campo de senha
+                                    BlocBuilder<LoginPageBloc, LoginState>(
+                                      buildWhen: (prev, curr) =>
+                                          prev.password != curr.password,
+                                      builder: (context, state) {
+                                        return FormInput(
+                                          labelText: 'Senha',
+                                          hintText: 'Coloque a sua senha',
+                                          obscureText: true,
+                                          onChanged: (value) => context
+                                              .read<LoginPageBloc>()
+                                              .add(LoginPasswordChanged(value)),
+                                          validator: (_) {
+                                            if (state.password.isEmpty) {
+                                              return 'Por favor, informe sua senha';
+                                            }
+                                            if (!state.isPasswordValid) {
+                                              return 'Senha invalida';
+                                            }
+                                            return null;
+                                          },
+                                        );
+                                      },
+                                    ),
 
-                              const Spacer(flex: 1),
-                            ],
+                                    const Gap(8),
+
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: TextButton(
+                                        onPressed: () => context.go('/signin'),
+                                        child: const Text("Não possui conta?"),
+                                      ),
+                                    ),
+
+                                    const Gap(32),
+
+                                    // Botão de login
+                                    BlocBuilder<LoginPageBloc, LoginState>(
+                                      buildWhen: (prev, curr) =>
+                                          prev.status != curr.status ||
+                                          prev.isValid != curr.isValid,
+                                      builder: (context, state) {
+                                        return Center(
+                                          child:
+                                              state.status ==
+                                                  LoginStatus.loading
+                                              ? const CircularProgressIndicator()
+                                              : ElevatedButton(
+                                                  onPressed: () {
+                                                    final isValid =
+                                                        _formKey.currentState
+                                                            ?.validate() ??
+                                                        false;
+                                                    if (!isValid) return;
+                                                    context
+                                                        .read<LoginPageBloc>()
+                                                        .add(
+                                                          const LoginSubmitted(),
+                                                        );
+                                                  },
+                                                  child: const Text("Login"),
+                                                ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+
+                                const Spacer(flex: 1),
+                              ],
+                            ),
                           ),
                         ),
                       ),
