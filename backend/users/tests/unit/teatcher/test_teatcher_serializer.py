@@ -3,7 +3,7 @@ from users.models.user import CustomUser
 from users.models.teatcher import Teatcher
 from users.serializers.teatcher_serializer import TeatcherSerializer
 
-class TeatcherSerializerTest(TestCase):
+class TestTeatcherSerializer(TestCase):
     def setUp(self):
         self.user = CustomUser.objects.create_user(
             email="test@example.com",
