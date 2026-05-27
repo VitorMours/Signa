@@ -44,16 +44,39 @@ class SubjectSingleView(APIView):
   authentication_classes = [JWTAuthentication]
 
   @swagger_auto_schema(responses = {200: SubjectSerializer})
-  def get(self, request: Request, uuid: UUID) -> Response:
-    pass
+  def get(self, request: Request, uuid: str) -> Response:
+    subject = SubjectService.get_subject_by_id(uuid)
+    
+    if not subject:
+      return Response(
+        {"detail":"Subject not found"}, 
+        status=status.HTTP_404_NOT_FOUND
+      )
+    
+    serializer = SubjectSerializer(subject)
+    return Response(serializer.data, status = status.HTTP_200_OK)
 
   @swagger_auto_schema(responses = {201: SubjectSerializer})
-  def patch(self, request: Request, uuid: UUID) -> Response:
-    pass
-
+  def patch(self, request: Request, uuid: str) -> Response:
+    subject = SubjectService.get_subject_by_id(uuid)
+    
+    if not subject:
+      return Response(
+        {"detail":"Subject from id not found"}, 
+        status=status.HTTP_404_NOT_FOUND
+      )
+      
+    serializer = SubjectSerializer(subject, data=request.data, partial=True)
+    if not serializer.is_valid():
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    updated_serializer = SubjectService.update_subject(subject, serializer.validated_data)
+    output = SubjectSerializer(updated_serializer)
+    return Response(output.data, status=status.HTTP_200_OK)
+    
   @swagger_auto_schema(responses = {204: SubjectSerializer})
-  def delete(self, request: Request, uuid: UUID) -> Response:
-    pass
+  def delete(self, request: Request, uuid: str) -> Response:
+    subject = Subjec
 
 
 
