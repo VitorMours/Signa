@@ -76,7 +76,14 @@ class SubjectSingleView(APIView):
     
   @swagger_auto_schema(responses = {204: SubjectSerializer})
   def delete(self, request: Request, uuid: str) -> Response:
-    subject = Subjec
+    subject = SubjectService.get_subject_by_id(uuid)
+    if not subject:
+      return Response(
+        {"detail":"Subject from id not found"},
+        status=status.HTTP_404_NOT_FOUND
+      )
+    SubjectService.deactivate_subject(uuid)
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 

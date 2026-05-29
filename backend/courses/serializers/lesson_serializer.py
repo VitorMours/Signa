@@ -14,11 +14,3 @@ class LessonSerializer(serializers.Serializer):
   created_at = serializers.DateTimeField(read_only=True)
   updated_at = serializers.DateTimeField(read_only=True)
   
-  def create(self, validated_data: Lesson) -> None:
-    return Lesson.objects.create(**validated_data)
-  
-  def update(self, instance: UUID, validated_data: dict[str, str | date]) -> None:
-    pass 
-  
-  def delete(self, instance_id: UUID) -> None:
-    pass

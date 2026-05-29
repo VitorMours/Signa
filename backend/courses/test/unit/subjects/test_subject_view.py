@@ -18,6 +18,7 @@ class TestSubjectView(TestCase):
         "knowledge_area":"Humanities",
         "name":"Starting of Phylosofi",
     }
+
     self.user = UserService.create_user(
       {
         "first_name":"testuser",
@@ -102,6 +103,10 @@ class TestSubjectView(TestCase):
 class TestSubjectSingleView(TestCase):
   def setUp(self) -> None:
     self.factory = APIRequestFactory()
+    self.patch_payload = {
+        "name":"Starting of Sociology",
+        "status":False
+    }
     self.payload = {
         "status":True,
         "knowledge_area":"Humanities",
@@ -171,30 +176,80 @@ class TestSubjectSingleView(TestCase):
     self.assertEqual(response.status_code, status.HTTP_200_OK)
 
   def test_if_subject_view_get_method_requried_jwt(self) -> None:
-    pass 
+    module = importlib.import_module("courses.views.subject")
+    class_ = module.SubjectSingleView.as_view()
+    request = self.factory.get(
+      f"/subjects/{str(self.subject.id)}",
+    )
+    response = class_(request, uuid=str(self.subject.id))
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
   
   def test_if_subject_view_patch_method_have_correct_signature(self) -> None:
-    pass 
+    module = importlib.import_module("courses.views.subject")
+    class_ = module.SubjectSingleView 
+    signature = inspect.signature(class_.patch)
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0], "self") 
+    self.assertEqual(parameters[1], "request") 
+    self.assertEqual(parameters[2], "uuid") 
   
   def test_if_subject_view_patch_method_works(self) -> None:
-    pass    
+    module = importlib.import_module("courses.views.subject")
+    class_ = module.SubjectSingleView.as_view()
+    request = self.factory.patch(
+      f"/subjects/{str(self.subject.id)}",
+      self.patch_payload,
+      content_type="application/json",
+      HTTP_AUTHORIZATION=f"Bearer {self.access_token}",
+    )
+    response = class_(request, uuid=str(self.subject.id))
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
 
   def test_if_subject_view_patch_method_requried_jwt(self) -> None:
-    pass
+    module = importlib.import_module("courses.views.subject")
+    class_ = module.SubjectSingleView.as_view()
+    request = self.factory.patch(
+      f"/subjects/{str(self.subject.id)}",
+      self.patch_payload,
+      content_type="application/json",
+    )
+    response = class_(request, uuid=str(self.subject.id))
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
   def test_if_subject_view_delete_method_have_correct_signature(self) -> None:
-    pass 
+    module = importlib.import_module("courses.views.subject")
+    class_ = module.SubjectSingleView 
+    signature = inspect.signature(class_.delete)
+    parameters = list(signature.parameters.keys())
+    self.assertEqual(parameters[0], "self")
+    self.assertEqual(parameters[1], "request")
+    self.assertEqual(parameters[2], "uuid")
   
   def test_if_subject_view_delete_method_works(self) -> None:
-    pass    
+    module = importlib.import_module("courses.views.subject")
+    class_ = module.SubjectSingleView.as_view()
+    request = self.factory.delete(
+      f"/subjects/{str(self.subject.id)}",
+      content_type="application/json",
+      HTTP_AUTHORIZATION=f"Bearer {self.access_token}",
+    )
+    response = class_(request, uuid=str(self.subject.id))
+    self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-  def test_if_subject_view_delete_method_requried_jwt(self) -> None:
-    pass
+  def test_if_subject_view_delete_method_required_jwt(self) -> None:
+    module = importlib.import_module("courses.views.subject")
+    class_ = module.SubjectSingleView.as_view()
+    request = self.factory.delete(
+      f"/subjects/{str(self.subject.id)}",
+      content_type="application/json",
+    )
+    response = class_(request, uuid=str(self.subject.id))
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
   
   
 
-
+    
 
 
 
