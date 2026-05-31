@@ -47,8 +47,8 @@ class TestLessonService(TestCase):
     def test_if_lesson_service_have_delete_method(self) -> None:
         module = importlib.import_module("courses.services.lesson_service")
         class_ = module.LessonService 
-        self.assertTrue(hasattr(class_, "delete_lesson"))
-        self.assertTrue(callable(getattr(class_, "delete_lesson", None)))
+        self.assertTrue(hasattr(class_, "deactivate_lesson"))
+        self.assertTrue(callable(getattr(class_, "deactivate_lesson", None)))
         
     def test_if_lesson_service_have_get_all_method(self) -> None:
         module = importlib.import_module("courses.services.lesson_service")
@@ -73,24 +73,56 @@ class TestLessonService(TestCase):
         parameters = list(signature.parameters.keys())
         self.assertEqual(parameters, [])
         result = class_.get_all_lessons()
-        self.assertIsInstance(result, list)
         self.assertEqual(result, [])        
+        class_.create_lesson(self.lesson_data)
+        result = class_.get_all_lessons()
+        self.assertEqual(len(result), 1)
+        self.assertIsInstance(result[0], Lesson)        
         
-    #def test_if_lesson_service_get_lesson_by_id_method_works(self) -> None:
-    #    module = importlib.import_module("courses.services.lesson_service")
-    #    class_ = module.LessonService 
-    #    signature = inspect.signature(class_.get_lesson_by_id)
-    #    parameters = list(signature.parameters.keys())
-    #    self.assertEqual(parameters, ["id"])
-    #    result = class_.get_lesson_by_id(id=uuid4()) 
+    def test_if_lesson_service_get_lesson_by_id_method_return_none_when_not_exists(self) -> None:
+        module = importlib.import_module("courses.services.lesson_service")
+        class_ = module.LessonService 
+        signature = inspect.signature(class_.get_lesson_by_id)
+        parameters = list(signature.parameters.keys())
+        self.assertEqual(parameters, ["id"])
+        result = class_.get_lesson_by_id(id=uuid4()) 
+        self.assertIsNone(result)
         
-        
-        
-        
-        
-        
-        
+    def test_if_lesson_service_get_lesson_by_id_method_return_lesson_when_exists(self) -> None:
+        module = importlib.import_module("courses.services.lesson_service")
+        class_ = module.LessonService 
+        lesson = class_.create_lesson(self.lesson_data)
+        result = class_.get_lesson_by_id(id=lesson.id)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, Lesson)
+
+    def test_if_lesson_service_update_lesson_method_works(self) -> None:
+        module = importlib.import_module("courses.services.lesson_service")
+        class_ = module.LessonService 
+        lesson = class_.create_lesson(self.lesson_data)
+        self.assertEqual(class_.get_all_lessons(), [lesson])
+        self.assertEqual(lesson.is_active, True)
+        self.assertEqual(lesson.content, self.lesson_data["content"])
+        class_.update_lesson(id=lesson.id, lesson_data = {"content":"modified content"})
+        lesson = class_.get_lesson_by_id(id=lesson.id)
+        self.assertEqual(lesson.content, "modified content")    
+    
+    def test_if_lesson_service_deactivate_lesson_method_works(self) -> None:
+        module = importlib.import_module("courses.services.lesson_service")
+        class_ = module.LessonService 
+        lesson = class_.create_lesson(self.lesson_data)
+        self.assertEqual(class_.get_all_lessons(), [lesson])
+        self.assertEqual(lesson.is_active, True)
+        class_.deactivate_lesson(id=lesson.id)
+        lesson = class_.get_lesson_by_id(id=lesson.id)
+        self.assertEqual(lesson.is_active, False)
         
 class TestLessonServiceEdgeCases(TestCase):
     def setUp(self) -> None:
+        pass
+    
+    def test_if_update_lesson_raise_value_error_when_not_find_lesson_with_id(self) -> None:
+        pass
+    
+    def test_if_deactivate_lesson_return_false_when_not_find_lesson_with_id(self) -> None:
         pass

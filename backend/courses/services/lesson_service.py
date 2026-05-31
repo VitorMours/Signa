@@ -12,9 +12,11 @@ class LessonService:
     
     @staticmethod 
     def get_lesson_by_id(id: UUID) -> Optional[Lesson]:
-        return Lesson.objects.get(id=id)
-    
-    
+        try:
+            return Lesson.objects.get(id=id)
+        except Lesson.DoesNotExist:
+            return None
+
     @staticmethod
     def create_lesson(lesson_data: dict) -> Lesson:
         with transaction.atomic():
@@ -22,11 +24,21 @@ class LessonService:
             return lesson 
     
     @staticmethod 
-    def update_lesson() -> Lesson:
-        pass 
+    def update_lesson(id: UUID, lesson_data: dict) -> Lesson:
+        lesson = LessonService.get_lesson_by_id(id)
+        if lesson is None:
+            raise ValueError(f"Lesson with id {id} does not exists") 
+        for key, value in lesson_data.items():
+            setattr(lesson, key, value)
+        lesson.save()
+        return lesson
     
-
     @staticmethod
-    def delete_lesson() -> bool:
-        pass 
+    def deactivate_lesson(id: UUID) -> bool:
+        lesson = LessonService.get_lesson_by_id(id)
+        if lesson is None:
+            return False 
+        lesson.is_active = False 
+        lesson.save()
+        return True 
     
