@@ -71,10 +71,7 @@ class _LoginViewState extends State<_LoginView> {
             SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: ConstrainedBox(
+                  return ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: constraints.maxHeight,
                       ),
@@ -98,110 +95,112 @@ class _LoginViewState extends State<_LoginView> {
 
                                 const Spacer(flex: 1),
 
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    BlocBuilder<LoginPageBloc, LoginState>(
-                                      buildWhen: (prev, curr) =>
-                                          prev.email != curr.email,
-                                      builder: (context, state) {
-                                        return FormInput(
-                                          labelText: 'Email',
-                                          hintText: 'Enter your email',
-                                          onChanged: (value) => context
-                                              .read<LoginPageBloc>()
-                                              .add(LoginEmailChanged(value)),
-                                          validator: (_) {
-                                            if (state.email.isEmpty) {
-                                              return 'Por favor, informe seu email';
-                                            }
-                                            if (!state.isEmailValid) {
-                                              return 'Email inválido';
-                                            }
-                                            return null;
+                                SingleChildScrollView(
+                                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                                  child:
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        BlocBuilder<LoginPageBloc, LoginState>(
+                                          buildWhen: (prev, curr) =>
+                                              prev.email != curr.email,
+                                          builder: (context, state) {
+                                            return FormInput(
+                                              labelText: 'Email',
+                                              hintText: 'Enter your email',
+                                              onChanged: (value) => context
+                                                  .read<LoginPageBloc>()
+                                                  .add(LoginEmailChanged(value)),
+                                              validator: (_) {
+                                                if (state.email.isEmpty) {
+                                                  return 'Por favor, informe seu email';
+                                                }
+                                                if (!state.isEmailValid) {
+                                                  return 'Email inválido';
+                                                }
+                                                return null;
+                                              },
+                                            );
                                           },
-                                        );
-                                      },
-                                    ),
+                                        ),
 
-                                    const Gap(20),
+                                        const Gap(20),
 
-                                    // Campo de senha
-                                    BlocBuilder<LoginPageBloc, LoginState>(
-                                      buildWhen: (prev, curr) =>
-                                          prev.password != curr.password,
-                                      builder: (context, state) {
-                                        return FormInput(
-                                          labelText: 'Senha',
-                                          hintText: 'Coloque a sua senha',
-                                          obscureText: true,
-                                          onChanged: (value) => context
-                                              .read<LoginPageBloc>()
-                                              .add(LoginPasswordChanged(value)),
-                                          validator: (_) {
-                                            if (state.password.isEmpty) {
-                                              return 'Por favor, informe sua senha';
-                                            }
-                                            if (!state.isPasswordValid) {
-                                              return 'Senha invalida';
-                                            }
-                                            return null;
+                                        // Campo de senha
+                                        BlocBuilder<LoginPageBloc, LoginState>(
+                                          buildWhen: (prev, curr) =>
+                                              prev.password != curr.password,
+                                          builder: (context, state) {
+                                            return FormInput(
+                                              labelText: 'Senha',
+                                              hintText: 'Coloque a sua senha',
+                                              obscureText: true,
+                                              onChanged: (value) => context
+                                                  .read<LoginPageBloc>()
+                                                  .add(LoginPasswordChanged(value)),
+                                              validator: (_) {
+                                                if (state.password.isEmpty) {
+                                                  return 'Por favor, informe sua senha';
+                                                }
+                                                if (!state.isPasswordValid) {
+                                                  return 'Senha invalida';
+                                                }
+                                                return null;
+                                              },
+                                            );
                                           },
-                                        );
-                                      },
+                                        ),
+
+                                        const Gap(8),
+
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: TextButton(
+                                            onPressed: () => context.go('/signin'),
+                                            child: const Text("Não possui conta?"),
+                                          ),
+                                        ),
+
+                                        const Gap(32),
+
+                                        // Botão de login
+                                        BlocBuilder<LoginPageBloc, LoginState>(
+                                          buildWhen: (prev, curr) =>
+                                              prev.status != curr.status ||
+                                              prev.isValid != curr.isValid,
+                                          builder: (context, state) {
+                                            return Center(
+                                              child:
+                                                  state.status ==
+                                                      LoginStatus.loading
+                                                  ? const CircularProgressIndicator()
+                                                  : ElevatedButton(
+                                                      onPressed: () {
+                                                        final isValid =
+                                                            _formKey.currentState
+                                                                ?.validate() ??
+                                                            false;
+                                                        if (!isValid) return;
+                                                        context
+                                                            .read<LoginPageBloc>()
+                                                            .add(
+                                                              const LoginSubmitted(),
+                                                            );
+                                                      },
+                                                      child: const Text("Login"),
+                                                    ),
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
-
-                                    const Gap(8),
-
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: TextButton(
-                                        onPressed: () => context.go('/signin'),
-                                        child: const Text("Não possui conta?"),
-                                      ),
-                                    ),
-
-                                    const Gap(32),
-
-                                    // Botão de login
-                                    BlocBuilder<LoginPageBloc, LoginState>(
-                                      buildWhen: (prev, curr) =>
-                                          prev.status != curr.status ||
-                                          prev.isValid != curr.isValid,
-                                      builder: (context, state) {
-                                        return Center(
-                                          child:
-                                              state.status ==
-                                                  LoginStatus.loading
-                                              ? const CircularProgressIndicator()
-                                              : ElevatedButton(
-                                                  onPressed: () {
-                                                    final isValid =
-                                                        _formKey.currentState
-                                                            ?.validate() ??
-                                                        false;
-                                                    if (!isValid) return;
-                                                    context
-                                                        .read<LoginPageBloc>()
-                                                        .add(
-                                                          const LoginSubmitted(),
-                                                        );
-                                                  },
-                                                  child: const Text("Login"),
-                                                ),
-                                        );
-                                      },
-                                    ),
-                                  ],
                                 ),
-
                                 const Spacer(flex: 1),
                               ],
                             ),
                           ),
                         ),
                       ),
-                    ),
                   );
                 },
               ),

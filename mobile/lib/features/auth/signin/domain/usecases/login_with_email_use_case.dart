@@ -1,11 +1,15 @@
+import 'package:mobile/core/entities/user_entity.dart';
 import 'package:mobile/features/auth/login/domain/entities/login_entity.dart';
-import 'package:mobile/features/auth/login/domain/interfaces/login_repository_interface.dart';
 
-class LoginWithEmailUseCase {
-  final LoginRepositoryInterface _interface;
-  LoginWithEmailUseCase(this._interface);
+import '../interfaces/signin_repository_interface.dart';
 
-  Future<LoginEntity> call({
+class SigninWithEmailUseCase {
+  final SigninRepositoryInterface _interface;
+  SigninWithEmailUseCase(this._interface);
+
+  Future<UserRequestEntity> call({
+    required String firstName,
+    required String lastName,
     required String email,
     required String password,
   }) async {
@@ -14,8 +18,12 @@ class LoginWithEmailUseCase {
     }
 
     if (password.length < 6) {
-      throw ArgumentError("Password need to be bigger than 6 characters");
+      throw ArgumentError("A senha precisa ser maior que 6 caracteres");
     }
-    return await _interface.loginWithEmail(email: email, password: password);
+     if (firstName.length < 0) {
+       throw ArgumentError("Voce precisa colocar o nome do usuario");
+     }
+
+    return await _interface.signinWithEmail(firstName: firstName, lastName: lastName, email: email, password: password);
   }
 }
