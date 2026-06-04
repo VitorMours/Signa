@@ -10,7 +10,9 @@ class LessonSerializer(serializers.Serializer):
   content = serializers.CharField()
   subject = serializers.PrimaryKeyRelatedField(queryset=Subject.objects.all())
   start_time = serializers.DateTimeField()
+  is_active = serializers.BooleanField(default=True, required=False)
   end_time = serializers.DateTimeField()
   created_at = serializers.DateTimeField(read_only=True)
   updated_at = serializers.DateTimeField(read_only=True)
   
+

@@ -53,7 +53,7 @@ class TestLessonSerializer(TestCase):
     class_ = module.LessonSerializer
     fields = class_().fields
     
-    serializer_fields = ("id", "content", "subject", "start_time",
+    serializer_fields = ("id", "content", "is_active", "subject", "start_time",
                          "end_time", "updated_at", "created_at")
     for field in fields:
         self.assertIn(field, serializer_fields)
