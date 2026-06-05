@@ -6,6 +6,6 @@ app_name = "authentication"
 router = routers.DefaultRouter()
 
 urlpatterns = [
-  path('login/', CustomTokenView.as_view(), name='login')
+  path('login/', CustomTokenView.as_view(), name='login'),
 ]
 

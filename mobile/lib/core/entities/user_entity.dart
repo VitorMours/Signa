@@ -1,18 +1,16 @@
 
-class UserRequestEntity {
+class UserEntity {
   final String firstName;
   final String lastName;
-  final String email ;
-  final String password ;
-
-  UserRequestEntity({
+  final String email;
+  final String password;
+  UserEntity({
     required this.firstName,
-    required this.lastName,
+    this.lastName = "",
     required this.email,
-    required this.password,
+    this.password = "",
   });
 
-
   List<Object?> get props => [firstName, lastName, email, password];
-
 }
+

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:mobile/core/components/app_logger.dart';
@@ -8,28 +7,24 @@ import 'package:mobile/core/routes/app_router.dart';
 import 'package:mobile/core/services/auth_token_service.dart';
 import 'package:mobile/utils/theme.dart';
 import "package:flutter_bloc/flutter_bloc.dart";
-import 'package:path_provider/path_provider.dart' as path_provider;
+import "package:path_provider/path_provider.dart";
 import 'core/di/injection_container.dart' as di;
 import 'core/di/injection_container.dart' show sl;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
-    final hiveDirectory = Directory('${appDocumentDirectory.path}/hive_data');
-    if (!hiveDirectory.existsSync()) {
-      hiveDirectory.createSync(recursive: true);
-    }
-    Hive.init(hiveDirectory.path);
 
-  } catch (e) {
-    print("Erro ao inicializar o armazenamento físico do Hive: $e");
+  final appDocumentDir = await getApplicationDocumentsDirectory();
+  final hiveDirectory = Directory('${appDocumentDir.path}/hive_data');
+
+  if (!hiveDirectory.existsSync()) {
+    hiveDirectory.createSync(recursive: true);
   }
 
+  Hive.init(hiveDirectory.path);
   await di.initDependencies();
-  await sl<AuthTokenService>().initDependecies(); // TODO: Correção sugerida de digitação para 'initDependencies'
-
+  await sl<AuthTokenService>().initDependencies();
   runApp(const MyApp());
 }
 

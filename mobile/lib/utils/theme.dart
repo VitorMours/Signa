@@ -18,8 +18,29 @@ class AppTheme {
       tertiary: AppColors.tertiary,
       surface: AppColors.surface,
     ),
-
     scaffoldBackgroundColor: AppColors.background,
+
+    navigationBarTheme: NavigationBarThemeData(
+      height: 75,
+      backgroundColor: AppColors.secondary,
+      surfaceTintColor: AppColors.secondary,
+
+      // Define o comportamento da label para ser ignorado
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        return IconThemeData(
+          color: AppColors.whiteText,
+          size: 30, // Ícones maiores
+        );
+      }),
+
+      // Cria o "sublinhado" (uma barra fina no topo do indicador)
+      indicatorShape: UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.background, width: 2),
+      ),
+      indicatorColor: AppColors.secondary,
+    ),
   );
 }
 
@@ -42,18 +63,27 @@ class AppTextStyle {
 
     foreground: Paint()
       ..shader = const LinearGradient(
-        colors: [
-          Color(0xFF00C2FF),
-          Color(0xFF5B21FF),
-        ],
-      ).createShader(
-        const Rect.fromLTWH(
-          0,
-          0,
-          300,
-          70,
-        ),
-      ),
+        colors: [Color(0xFF00C2FF), Color(0xFF5B21FF)],
+      ).createShader(const Rect.fromLTWH(0, 0, 300, 70)),
+  );
+
+  static final headingLarge = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.w800,
+    fontFamily: GoogleFonts.lexend().fontFamily,
+    color: AppColors.text,
+  );
+  static final headingMedium = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w800,
+    fontFamily: GoogleFonts.lexend().fontFamily,
+    color: AppColors.text,
+  );
+  static final headingSmall = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w800,
+    fontFamily: GoogleFonts.lexend().fontFamily,
+    color: AppColors.text,
   );
 }
 
@@ -85,10 +115,7 @@ class AppInputTheme {
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(25),
-      borderSide: const BorderSide(
-        color: AppColors.hintText,
-        width: 1,
-      ),
+      borderSide: const BorderSide(color: AppColors.hintText, width: 1),
     ),
 
     focusedBorder: OutlineInputBorder(
