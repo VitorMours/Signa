@@ -7,7 +7,7 @@ class SigninWithEmailUseCase {
   final SigninRepositoryInterface _interface;
   SigninWithEmailUseCase(this._interface);
 
-  Future<UserRequestEntity> call({
+  Future<UserEntity> call({
     required String firstName,
     required String lastName,
     required String email,

@@ -59,7 +59,7 @@ class _ProfileViewState extends State<_ProfileView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Gap(32),
+                    const Gap(64),
 
                     Align(
                       alignment: Alignment.center,
