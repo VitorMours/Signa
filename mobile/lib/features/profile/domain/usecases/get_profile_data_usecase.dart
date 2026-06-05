@@ -1,3 +1,4 @@
+import 'package:mobile/core/components/app_logger.dart';
 import 'package:mobile/core/entities/user_entity.dart';
 import 'package:mobile/features/profile/data/repositories/profile_repository_interface_impl.dart';
 
@@ -5,26 +6,14 @@ class GetProfileDataUseCase {
   final ProfileRepositoryInterfaceImpl repository;
 
   GetProfileDataUseCase(this.repository);
-
-  Future<UserEntity> call({
-    required String firstName,
-    String? lastName,
-    required String email,
-    required String password,
-  }) async {
-    if (firstName.isEmpty || email.isEmpty || password.isEmpty) {
-      throw ArgumentError('First name, email and password are required');
+  Future<UserEntity> call() async {
+    try {
+      UserEntity response = await repository.getUserProfileData();
+      print(response);
+      return response;
+    } catch (e, stackTrace) {
+      AppLogger.e("Error fetching profile data", e, stackTrace);
+      rethrow;
     }
-
-    if (password.length < 6) {
-      throw ArgumentError("Password need to be bigger than 6 characters");
-    }
-
-    return await repository.getUserProfileData(
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password,
-    );
   }
 }

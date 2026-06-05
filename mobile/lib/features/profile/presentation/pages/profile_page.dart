@@ -1,57 +1,89 @@
 import "package:flutter/material.dart";
 import "package:mobile/core/components/form_input.dart";
 import "package:gap/gap.dart";
+import "package:mobile/core/di/injection_container.dart";
+import "package:mobile/core/networks/http_client.dart";
+import "package:mobile/core/services/auth_token_service.dart";
+import "package:mobile/features/profile/data/datasources/profile_datasource.dart";
+import "package:mobile/features/profile/data/repositories/profile_repository_interface_impl.dart";
+import "package:mobile/features/profile/domain/usecases/get_profile_data_usecase.dart";
+import "package:mobile/features/profile/presentation/cubits/profile_page_cubit.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    return BlocProvider(
+      create: (context) => sl<ProfilePageCubit>()..loadProfile(),
+      child: _ProfileView(),
+    );
+  }
+}
 
+// 👇 Mudou para StatefulWidget por causa do formKey
+class _ProfileView extends StatefulWidget {
+  const _ProfileView();
+
+  @override
+  State<_ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<_ProfileView> {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          children: <Widget>[
-            Text("Informacoes Pessoais"),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: FormInput(
-                          labelText: 'Primeiro Nome',
-                          hintText: 'Johgn',
-                          validator: (String? p1) {},
-                        ),
-                      ),
-                      Gap(16),
-                      Expanded(
-                        child: FormInput(
-                          labelText: 'Sobrenome',
-                          hintText: 'Doee',
-                          validator: (String? p1) {},
-                        ),
-                      ),
-                    ],
-                  ),
-                  FormInput(
-                    labelText: 'Email',
-                    hintText: 'Johgn',
-                    validator: (String? p1) {},
-                  ),
-                  FormInput(
-                    labelText: 'Especializacao',
-                    hintText: 'Johgn',
-                    validator: (String? p1) {},
-                  ),
-                ],
+      body: BlocListener<ProfilePageCubit, ProfilePageState>(
+        listener: (BuildContext context, ProfilePageState state) {
+          if (state is ProfilePageFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Erro ao carregar perfil!'),
+                backgroundColor: Colors.red,
+                action: SnackBarAction(
+                  label: 'Tentar novamente',
+                  textColor: Colors.white,
+                  onPressed: () =>
+                      context.read<ProfilePageCubit>().loadProfile(),
+                ),
               ),
-            ),
-          ],
+            );
+          }
+        },
+        child: BlocBuilder<ProfilePageCubit, ProfilePageState>(
+          builder: (context, state) {
+            if (state is ProfilePageLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (state is ProfilePageSuccess) {
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: <Widget>[
+                    Text("Informacoes Pessoais"),
+                    Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Column(children: [Text("Primeiro Nome")]),
+                            ),
+                            Gap(16),
+                            Expanded(child: Text("")),
+                          ],
+                        ),
+                        Text(""),
+                        Text(""),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
     );

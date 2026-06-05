@@ -8,12 +8,7 @@ class ProfileRepositoryInterfaceImpl implements ProfileRepositoryInterface {
   ProfileRepositoryInterfaceImpl(this.profileDataSource);
 
   @override
-  Future<UserEntity> getUserProfileData({
-    required String firstName,
-    String? lastName,
-    required String email,
-    required String password,
-  }) async {
+  Future<UserEntity> getUserProfileData() async {
     final response = await profileDataSource.fetchUserProfile();
     final profileModel = ProfileModel(
       firstName: response.firstName,
