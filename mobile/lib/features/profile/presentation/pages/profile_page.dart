@@ -4,6 +4,7 @@ import "package:gap/gap.dart";
 import "package:mobile/core/di/injection_container.dart";
 import "package:mobile/features/profile/presentation/cubits/profile_page_cubit.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:mobile/utils/theme.dart";
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -53,26 +54,86 @@ class _ProfileViewState extends State<_ProfileView> {
             }
 
             if (state is ProfilePageSuccess) {
-              return Padding(
+              return SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("Informacoes Pessoais"),
-                    Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(children: [Text("Primeiro Nome")]),
+                    const Gap(32),
+
+                    Align(
+                      alignment: Alignment.center,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 72,
+                            backgroundColor: Colors.grey[300],
+                            child: const Icon(Icons.person, size: 72),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () {}, // abrir galeria
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: Colors.blue,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                            Gap(16),
-                            Expanded(child: Text("das")),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const Gap(32),
+
+                    Text(
+                      "Informações Pessoais",
+                      style: AppTextStyle.headingMedium,
+                    ),
+                    const Gap(16),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: FormInput(
+                            labelText: "Primeiro Nome",
+                            hintText: state.data.firstName,
+                            validator: (string) {},
+                          ),
                         ),
-                        Text("asd"),
-                        Text("asd"),
+                        const Gap(16),
+                        Expanded(
+                          child: FormInput(
+                            labelText: 'Sobrenome',
+                            hintText: state.data.lastName,
+                            validator: (String? p1) {},
+                          ),
+                        ),
                       ],
                     ),
+                    const Gap(16),
+                    FormInput(
+                      labelText: 'Email',
+                      hintText: state.data.email,
+                      validator: (String? p1) {},
+                    ),
+                    const Gap(16),
+                    FormInput(
+                      labelText: 'Bio',
+                      hintText: 'Conte-nos mais sobre você...',
+                      minLines: 4,
+                      maxLines: 6,
+                      validator: (String? p1) {},
+                    ),
+                    const Gap(32),
                   ],
                 ),
               );

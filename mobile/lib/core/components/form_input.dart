@@ -9,6 +9,8 @@ class FormInput extends StatefulWidget {
     this.onChanged,
     this.errorText,
     this.obscureText = false,
+    this.maxLines = 1, // 👈 padrão 1 linha (comportamento atual)
+    this.minLines = 1,
   });
 
   final String? Function(String?) validator;
@@ -17,6 +19,8 @@ class FormInput extends StatefulWidget {
   final bool obscureText;
   final String? errorText;
   final void Function(String)? onChanged;
+  final int maxLines;
+  final int minLines;
 
   @override
   State<FormInput> createState() => _FormInputState();
@@ -44,6 +48,10 @@ class _FormInputState extends State<FormInput> {
           onChanged: widget.onChanged,
           validator: widget.validator,
           obscureText: widget.obscureText,
+          maxLines: widget.obscureText
+              ? 1
+              : widget.maxLines, // 👈 senha sempre 1 linha
+          minLines: widget.minLines,
         ),
       ],
     );

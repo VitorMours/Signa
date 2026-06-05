@@ -66,6 +66,25 @@ class AppTextStyle {
         colors: [Color(0xFF00C2FF), Color(0xFF5B21FF)],
       ).createShader(const Rect.fromLTWH(0, 0, 300, 70)),
   );
+
+  static final headingLarge = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.w800,
+    fontFamily: GoogleFonts.lexend().fontFamily,
+    color: AppColors.text,
+  );
+  static final headingMedium = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w800,
+    fontFamily: GoogleFonts.lexend().fontFamily,
+    color: AppColors.text,
+  );
+  static final headingSmall = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w800,
+    fontFamily: GoogleFonts.lexend().fontFamily,
+    color: AppColors.text,
+  );
 }
 
 class ElevatedButtonTheme {
