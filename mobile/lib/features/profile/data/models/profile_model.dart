@@ -5,21 +5,21 @@ class ProfileModel extends UserEntity {
     required super.firstName,
     super.lastName,
     required super.email,
-    required super.password,
+    super.password,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
     return ProfileModel(
-      firstName: json['firstName'],
-      lastName: json['lastName'] ?? '',
-      email: json['email'],
-      password: json['password'],
+      firstName: json['first_name'] ?? json['firstName'] ?? '',
+      lastName: json['last_name'] ?? json['lastName'] ?? '',
+      email: json['email'] ?? '',
+      password: json['password'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() => {
-    "firstName": firstName,
-    "lastName": lastName,
+    "first_name": firstName,
+    "last_name": lastName,
     "email": email,
     "password": password,
   };

@@ -16,14 +16,14 @@ void main() async {
 
   final appDocumentDir = await getApplicationDocumentsDirectory();
   final hiveDirectory = Directory('${appDocumentDir.path}/hive_data');
-  
+
   if (!hiveDirectory.existsSync()) {
     hiveDirectory.createSync(recursive: true);
   }
-  
+
   Hive.init(hiveDirectory.path);
   await di.initDependencies();
-  // await sl<AuthTokenService>().initDependencies();
+  await sl<AuthTokenService>().initDependencies();
   runApp(const MyApp());
 }
 

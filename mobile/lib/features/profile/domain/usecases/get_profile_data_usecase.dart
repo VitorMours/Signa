@@ -9,7 +9,6 @@ class GetProfileDataUseCase {
   Future<UserEntity> call() async {
     try {
       UserEntity response = await repository.getUserProfileData();
-      print(response);
       return response;
     } catch (e, stackTrace) {
       AppLogger.e("Error fetching profile data", e, stackTrace);

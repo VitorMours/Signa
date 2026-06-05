@@ -2,11 +2,6 @@ import "package:flutter/material.dart";
 import "package:mobile/core/components/form_input.dart";
 import "package:gap/gap.dart";
 import "package:mobile/core/di/injection_container.dart";
-import "package:mobile/core/networks/http_client.dart";
-import "package:mobile/core/services/auth_token_service.dart";
-import "package:mobile/features/profile/data/datasources/profile_datasource.dart";
-import "package:mobile/features/profile/data/repositories/profile_repository_interface_impl.dart";
-import "package:mobile/features/profile/domain/usecases/get_profile_data_usecase.dart";
 import "package:mobile/features/profile/presentation/cubits/profile_page_cubit.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
@@ -58,7 +53,7 @@ class _ProfileViewState extends State<_ProfileView> {
             }
 
             if (state is ProfilePageSuccess) {
-              Padding(
+              return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   children: <Widget>[
@@ -71,11 +66,11 @@ class _ProfileViewState extends State<_ProfileView> {
                               child: Column(children: [Text("Primeiro Nome")]),
                             ),
                             Gap(16),
-                            Expanded(child: Text("")),
+                            Expanded(child: Text("das")),
                           ],
                         ),
-                        Text(""),
-                        Text(""),
+                        Text("asd"),
+                        Text("asd"),
                       ],
                     ),
                   ],

@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthTokenService {
   static late Box<String> authBox;
 
-  Future<void> initDependecies() async {
+  Future<void> initDependencies() async {
     authBox = await Hive.openBox<String>("auth_token");
   }
 

@@ -1,5 +1,7 @@
 import 'package:mobile/core/components/app_logger.dart';
+import 'package:mobile/core/di/injection_container.dart';
 import 'package:mobile/core/networks/http_client.dart';
+import 'package:mobile/core/services/auth_token_service.dart';
 import 'package:mobile/features/auth/login/data/models/login_model.dart';
 
 class LoginDataSource {
@@ -15,6 +17,8 @@ class LoginDataSource {
         data: loginData.toJson(),
       );
       AppLogger.i("Login response: ${response.data}");
+      await sl<AuthTokenService>().saveAccessToken(response.data["access"]);
+      await sl<AuthTokenService>().saveRefreshToken(response.data["refresh"]);
       return LoginModel.fromJson(response.data);
     } catch (e, stack) {
       AppLogger.e("Login error: $e\n$stack");

@@ -7,7 +7,7 @@ class UserEntity {
     required this.firstName,
     this.lastName = "",
     required this.email,
-    required this.password,
+    this.password = "",
   });
 
   List<Object?> get props => [firstName, lastName, email, password];

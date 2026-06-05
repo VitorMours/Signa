@@ -13,20 +13,11 @@ class HttpClient {
           connectTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 3),
         ),
-      ) {
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final token = await _authTokenService.getAccessToken();
+      );
 
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
-            AppLogger.d("Token injetado: ${options.path}");
-          }
-
-          return handler.next(options);
-        },
-      ),
-    );
+  // ✅ Gera o Options com o token — use só nas requisições que precisam
+  Future<Options> authOptions() async {
+    final token = await _authTokenService.getAccessToken();
+    return Options(headers: {'Authorization': 'Bearer $token'});
   }
 }
