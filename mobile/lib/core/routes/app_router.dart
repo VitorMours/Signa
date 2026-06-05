@@ -9,6 +9,7 @@ final router = GoRouter(
   routes: [
     GoRoute(path: Routes.login, builder: (context, state) => LoginPage()),
     GoRoute(path: Routes.signin, builder: (context, state) => SigninPage()),
+    GoRoute(path: Routes.home, builder: (context, state) => HomePage()),
     // GoRoute(path: Routes.splash, builder: (context, state) => SplashPage()),
   ],
 );

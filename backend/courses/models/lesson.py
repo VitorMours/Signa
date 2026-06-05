@@ -8,6 +8,7 @@ class Lesson(models.Model):
   subject = models.ForeignKey(Subject, on_delete = models.CASCADE, blank=False)
   end_time = models.DateTimeField(blank=False, null=False)
   start_time = models.DateTimeField(blank=False, null=False)
+  is_active = models.BooleanField(default = True)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   
