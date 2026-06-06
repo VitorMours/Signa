@@ -10,10 +10,10 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:path_provider/path_provider.dart";
 import 'core/di/injection_container.dart' as di;
 import 'core/di/injection_container.dart' show sl;
+import 'package:flutter/services.dart'; // Importe necessário para SystemChrome
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
 
   final appDocumentDir = await getApplicationDocumentsDirectory();
   final hiveDirectory = Directory('${appDocumentDir.path}/hive_data');
@@ -25,7 +25,12 @@ void main() async {
   Hive.init(hiveDirectory.path);
   await di.initDependencies();
   await sl<AuthTokenService>().initDependencies();
-  runApp(const MyApp());
+
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
+    _,
+  ) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {

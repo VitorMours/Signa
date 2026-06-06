@@ -18,5 +18,7 @@ class CameraPageError extends CameraPageState {
 
 class CameraPageStreaming extends CameraPageState {
   final CameraController controller;
-  CameraPageStreaming(this.controller);
+  final Map<String, dynamic>? lastResult;
+
+  CameraPageStreaming(this.controller, {this.lastResult});
 }

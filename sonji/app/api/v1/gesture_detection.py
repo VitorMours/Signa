@@ -40,7 +40,6 @@ async def process_gesture(websocket: WebSocket, service: GestureDetectionService
       data = await websocket.receive_bytes()
 
       gesture_result = service.detect_gesture(data=data)
-
       await websocket.send_json({"gesture": gesture_result})
       await asyncio.sleep(0.01)
 
