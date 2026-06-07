@@ -10,7 +10,7 @@ class HttpClient {
     : dio = Dio(
         BaseOptions(
           baseUrl: 'http://192.168.15.47:8000/api',
-          connectTimeout: const Duration(seconds: 5),
+          connectTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 3),
         ),
       ) {

@@ -1,7 +1,10 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:camera/camera.dart";
+import "package:mobile/features/camera/domain/entities/hands_entities.dart";
 import "package:mobile/features/camera/presentation/widgets/hand_painter.dart";
+import "package:mobile/features/camera/presentation/widgets/head_painter.dart";
+import "package:mobile/features/camera/presentation/widgets/pose_painter.dart";
 import "../cubits/camera_page_cubit.dart";
 
 class CameraPage extends StatelessWidget {
@@ -10,7 +13,10 @@ class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CameraPageCubit()..initCamera(),
+      create: (context) => CameraPageCubit(
+        startDetection: context.read(),
+        stopDetection: context.read(),
+      )..initCamera(),
       child: const _CameraView(),
     );
   }
@@ -55,19 +61,18 @@ class _CameraView extends StatelessWidget {
             }
 
             if (state is CameraPageStreaming) {
-              final gestureData = state.lastResult?['gesture'];
-              final hands = _parseHands(
-                gestureData is Map ? gestureData['hands'] : null,
-              );
-              final previewSize = state.controller.value.previewSize;
+              final hands = _parseHands(state.handEntity);
               final isFront =
                   state.controller.description.lensDirection ==
                   CameraLensDirection.front;
+              final previewSize = state.controller.value.previewSize;
 
               return _PageLayout(
                 cameraContent: Stack(
                   children: [
                     SizedBox.expand(child: CameraPreview(state.controller)),
+
+                    // Painter das mãos
                     Positioned.fill(
                       child: CustomPaint(
                         painter: HandLandmarksPainter(
@@ -77,6 +82,27 @@ class _CameraView extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    // Painter da pose
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: PoseLandmarksPainter(
+                          bodyEntity: state.bodyEntity,
+                          isMirrored: isFront,
+                        ),
+                      ),
+                    ),
+
+                    // Painter da cabeça
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: HeadLandmarksPainter(
+                          headEntity: state.headEntity,
+                          isMirrored: isFront,
+                        ),
+                      ),
+                    ),
+
                     // Badge AO VIVO
                     Positioned(
                       top: 12,
@@ -145,30 +171,21 @@ class _CameraView extends StatelessWidget {
     );
   }
 
-  List<List<Map<String, dynamic>>> _parseHands(dynamic rawHands) {
-    if (rawHands is List) {
-      return rawHands
-          .map<List<Map<String, dynamic>>>((hand) {
-            if (hand is List) {
-              return hand
-                  .map<Map<String, dynamic>>((landmark) {
-                    if (landmark is Map)
-                      return Map<String, dynamic>.from(landmark);
-                    return <String, dynamic>{};
-                  })
-                  .where((l) => l.containsKey('x') && l.containsKey('y'))
-                  .toList();
-            }
-            if (hand is Map) {
-              final l = Map<String, dynamic>.from(hand);
-              if (l.containsKey('x') && l.containsKey('y')) return [l];
-            }
-            return <Map<String, dynamic>>[];
-          })
-          .where((hand) => hand.isNotEmpty)
-          .toList();
-    }
-    return [];
+  List<List<Map<String, dynamic>>> _parseHands(HandEntity? handEntity) {
+    if (handEntity == null || !handEntity.success) return [];
+    return handEntity.hands
+        .map<List<Map<String, dynamic>>>(
+          (hand) => hand
+              .map<Map<String, dynamic>>(
+                (landmark) => {
+                  'x': landmark['x'] ?? 0.0,
+                  'y': landmark['y'] ?? 0.0,
+                  'z': landmark['z'] ?? 0.0,
+                },
+              )
+              .toList(),
+        )
+        .toList();
   }
 }
 
@@ -185,7 +202,6 @@ class _PageLayout extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         child: Column(
           children: [
-            // Container da câmera
             Expanded(
               child: Container(
                 decoration: BoxDecoration(

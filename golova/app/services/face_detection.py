@@ -5,8 +5,8 @@ import mediapipe as mp
 from mediapipe.tasks import python
 import cv2
 from mediapipe.tasks.python.vision import (
-    HandLandmarker,
-    HandLandmarkerOptions,
+    FaceLandmarker,
+    FaceLandmarkerOptions,
     RunningMode
 )
 BaseOptions = mp.tasks.BaseOptions
@@ -14,19 +14,18 @@ VisionRunningMode = RunningMode
 logger = setup_logger(__name__)
 
 
-class GestureDetectionService:
+class HeadDetectionService:
   
   def __init__(self ) -> None:
-    options = HandLandmarkerOptions(
+    options = FaceLandmarkerOptions(
     base_options=BaseOptions(
-        model_asset_path="app/assets/hand_landmarker.task"
+        model_asset_path="app/assets/face_landmarker.task"
     ),
     running_mode=VisionRunningMode.VIDEO,
-    num_hands=2
     )
-    self.landmarker = HandLandmarker.create_from_options(options)
+    self.landmarker = FaceLandmarker.create_from_options(options)
 
-  HAND_CONNECTIONS = [
+  face_CONNECTIONS = [
     (0,1), (1,2), (2,3), (3,4), # Polegar
     (0,5), (5,6), (6,7), (7,8), # Indicador
     (5,9), (9,10), (10,11), (11,12), # Médio
@@ -35,7 +34,7 @@ class GestureDetectionService:
     (0,17) # Palma
   ]
   
-  def detect_gesture(self, data: bytes) -> None:
+  def detect_head(self, data: bytes) -> None:
     try:
       np_arr = np.frombuffer(data, np.uint8)
       
@@ -48,19 +47,19 @@ class GestureDetectionService:
       timestamp = int(time.time() * 1000)
       result = self.landmarker.detect_for_video(mp_image, timestamp)
 
-      hands = []
-      if result.hand_landmarks:
-        for hand in result.hand_landmarks:
+      faces = []
+      if result.face_landmarks:
+        for face in result.face_landmarks:
           landmarks = []
-          for landmark in hand:
+          for landmark in face:
             landmarks.append({
               "x": float(landmark.x),
               "y": float(landmark.y),
               "z": float(landmark.z)
               })
-          hands.append(landmarks)
-          print(hands)
-        return {"success": True,"hands": hands}
+          faces.append(landmarks)
+          print(faces)
+        return {"success": True,"faces": faces}
 
     except Exception as e:
       logger.exception("Erro ao processar gesto")

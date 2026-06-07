@@ -36,6 +36,8 @@ class HandLandmarksPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    print('[PosePainter] bodyEntity: $hands');
+
     if (hands.isEmpty) return;
 
     final linePaint = Paint()
