@@ -2,7 +2,7 @@ import 'package:web_socket/web_socket.dart';
 
 class WsClient {
   Future<List<WebSocket>> createSockets() async {
-    String host = "192.168.15.47";
+    String host = "10.56.250.245";
     final hand_socket = await WebSocket.connect(
       Uri.parse("ws://$host:8080/v1/gesture-detection/process"),
     );

@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:camera/camera.dart';
-import 'package:image/image.dart' as img;
 import 'package:mobile/features/camera/domain/entities/hands_entities.dart';
 import 'package:mobile/features/camera/domain/entities/head_entities.dart';
 import 'package:mobile/features/camera/domain/entities/pose_entities.dart';
@@ -21,6 +18,11 @@ class CameraPageCubit extends Cubit<CameraPageState> {
   StreamSubscription? _handSub;
   StreamSubscription? _bodySub;
   StreamSubscription? _headSub;
+
+  // Variáveis para persistir o estado entre eventos dos streams
+  HandEntity? _lastHand;
+  BodyEntity? _lastBody;
+  HeadEntity? _lastHead;
 
   CameraPageCubit({
     required StartDetectionStream startDetection,
@@ -56,33 +58,25 @@ class CameraPageCubit extends Cubit<CameraPageState> {
     try {
       await _startDetection.call();
 
-      // ✅ Emite PRIMEIRO para garantir que o estado já é CameraPageStreaming
+      // Inicia em um estado limpo
       emit(CameraPageStreaming(_controller!));
 
-      // Agora registra os listeners
       _handSub = _startDetection.handStream.listen((result) {
-        final current = state;
-        if (current is CameraPageStreaming) {
-          emit(current.copyWith(handEntity: result));
-        }
+        _lastHand = result;
+        _emitStreamingState();
       });
 
       _bodySub = _startDetection.bodyStream.listen((result) {
-        final current = state;
-        if (current is CameraPageStreaming) {
-          emit(current.copyWith(bodyEntity: result));
-        }
+        _lastBody = result;
+        _emitStreamingState();
       });
 
       _headSub = _startDetection.headStream.listen((result) {
-        final current = state;
-        if (current is CameraPageStreaming) {
-          emit(current.copyWith(headEntity: result));
-        }
+        _lastHead = result;
+        _emitStreamingState();
       });
 
-      // Inicia o envio de frames
-      _controller!.startImageStream((CameraImage image) {
+      await _controller!.startImageStream((CameraImage image) {
         final bytes = ImageManipulator.convertToBytes(image);
         _startDetection.sendFrame(bytes);
       });
@@ -91,15 +85,34 @@ class CameraPageCubit extends Cubit<CameraPageState> {
     }
   }
 
+  // Método centralizador para emitir o estado com os dados agregados
+  void _emitStreamingState() {
+    if (state is CameraPageStreaming) {
+      emit(
+        CameraPageStreaming(
+          _controller!,
+          handEntity: _lastHand,
+          bodyEntity: _lastBody,
+          headEntity: _lastHead,
+        ),
+      );
+    }
+  }
+
   Future<void> stopStreaming() async {
     await _controller?.stopImageStream();
     await _stopDetection.call();
+
+    // Cancela os subs e limpa as variáveis de persistência
     await _handSub?.cancel();
     await _bodySub?.cancel();
     await _headSub?.cancel();
     _handSub = null;
     _bodySub = null;
     _headSub = null;
+    _lastHand = null;
+    _lastBody = null;
+    _lastHead = null;
 
     if (_controller != null) {
       emit(CameraPageReady(_controller!));

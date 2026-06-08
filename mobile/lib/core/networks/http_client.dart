@@ -9,7 +9,7 @@ class HttpClient {
   HttpClient(this._authTokenService)
     : dio = Dio(
         BaseOptions(
-          baseUrl: 'http://192.168.15.47:8000/api',
+          baseUrl: 'http://10.56.250.245:8000/api',
           connectTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 3),
         ),

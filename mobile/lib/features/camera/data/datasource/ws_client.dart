@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:web_socket/web_socket.dart';
 
 class WsClient {
-  static const String _host = '192.168.15.47';
+  static const String _host = '10.56.250.245';
 
   WebSocket? _handSocket;
   WebSocket? _bodySocket;
